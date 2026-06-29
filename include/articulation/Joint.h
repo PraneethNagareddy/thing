@@ -4,6 +4,7 @@
 
 #ifndef THING_JOINTS_H
 #define THING_JOINTS_H
+#include "Motion.h"
 #include "hardware/Servo.h"
 #include "telemetry/IMonitorable.h"
 namespace articulation {
@@ -25,7 +26,7 @@ namespace articulation {
         full_flex_position_(full_flex_position),
         current_position_(default_position) {}
 
-        void move(float movement_percent);
+        articulation::movement::Status move(float movement_percent);
         telemetry::JointReading poll() override;
     };
 }
