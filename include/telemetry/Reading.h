@@ -14,6 +14,7 @@ namespace telemetry {
     public:
         std::chrono::steady_clock::time_point timestamp;
     private:
+        BaseReading() = default;
     };
 
     struct JointReading : BaseReading {

@@ -24,35 +24,48 @@ namespace articulation {
         public:
             float percentage;
         private:
+            MovementValue() = default;
         };
 
-        struct Flexion : MovementValue {};
-        struct Extension : MovementValue {};
-        struct Adduction : MovementValue {};
-        struct Abduction : MovementValue {};
-        struct Opposition : MovementValue {};
-        struct Reposition : MovementValue {};
+        struct Flexion : MovementValue {
+            explicit Flexion(float percent) : MovementValue(percent) {}
+        };
+        struct Extension : MovementValue {
+            explicit Extension(float percent) : MovementValue(percent) {}
+        };
+        struct Adduction : MovementValue {
+            explicit Adduction(float percent) : MovementValue(percent) {}
+        };
+        struct Abduction : MovementValue {
+            explicit Abduction(float percent) : MovementValue(percent) {}
+        };
+        struct Opposition : MovementValue {
+            explicit Opposition(float percent) : MovementValue(percent) {}
+        };
+        struct Reposition : MovementValue {
+            explicit Reposition(float percent) : MovementValue(percent) {}
+        };
     }
 
     class IFlexible {
     public:
         virtual ~IFlexible() = default;
-        virtual movement::Status flex(movement::Flexion flexion) const = 0;
-        virtual movement::Status extend(movement::Extension extension) const = 0;
+        [[nodiscard]] virtual movement::Status flex(movement::Flexion flexion) const = 0;
+        [[nodiscard]] virtual movement::Status extend(movement::Extension extension) const = 0;
     };
 
     class ISpreadable {
     public:
         virtual ~ISpreadable() = default;
-        virtual movement::Status adduct(movement::Adduction adduction) const = 0;
-        virtual movement::Status abduct(movement::Abduction abduction) const  = 0;
+        [[nodiscard]] virtual movement::Status adduct(movement::Adduction adduction) const = 0;
+        [[nodiscard]] virtual movement::Status abduct(movement::Abduction abduction) const  = 0;
     };
 
     class IOpposable {
     public:
         virtual ~IOpposable() = default;
-        virtual movement::Status oppose(movement::Opposition opposition) const = 0;
-        virtual movement::Status repose(movement::Reposition reposition) const = 0;
+        [[nodiscard]] virtual movement::Status oppose(movement::Opposition opposition) const = 0;
+        [[nodiscard]] virtual movement::Status repose(movement::Reposition reposition) const = 0;
     };
 }
 
