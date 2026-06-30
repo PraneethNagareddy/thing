@@ -50,22 +50,22 @@ namespace articulation {
     class IFlexible {
     public:
         virtual ~IFlexible() = default;
-        [[nodiscard]] virtual movement::Status flex(movement::Flexion flexion) const = 0;
-        [[nodiscard]] virtual movement::Status extend(movement::Extension extension) const = 0;
+        [[nodiscard]] virtual movement::Status flex(movement::Flexion flexion) = 0;
+        [[nodiscard]] virtual movement::Status extend(movement::Extension extension) = 0;
     };
 
     class ISpreadable {
     public:
         virtual ~ISpreadable() = default;
-        [[nodiscard]] virtual movement::Status adduct(movement::Adduction adduction) const = 0;
-        [[nodiscard]] virtual movement::Status abduct(movement::Abduction abduction) const  = 0;
+        [[nodiscard]] virtual movement::Status adduct(movement::Adduction adduction) = 0;
+        [[nodiscard]] virtual movement::Status abduct(movement::Abduction abduction)  = 0;
     };
 
     class IOpposable {
     public:
         virtual ~IOpposable() = default;
-        [[nodiscard]] virtual movement::Status oppose(movement::Opposition opposition) const = 0;
-        [[nodiscard]] virtual movement::Status repose(movement::Reposition reposition) const = 0;
+        [[nodiscard]] virtual movement::Status oppose(movement::Opposition opposition) = 0;
+        [[nodiscard]] virtual movement::Status repose(movement::Reposition reposition) = 0;
     };
 }
 

@@ -25,8 +25,8 @@ namespace anatomy::hand {
         explicit Finger(const articulation::Joint &joint) : flex_joint_(joint) {}
         ~Finger() override = default;
 
-        [[nodiscard]] articulation::movement::Status flex(articulation::movement::Flexion flexion) const override;
-        [[nodiscard]] articulation::movement::Status extend(articulation::movement::Extension extension) const override;
+        [[nodiscard]] articulation::movement::Status flex(articulation::movement::Flexion flexion) override;
+        [[nodiscard]] articulation::movement::Status extend(articulation::movement::Extension extension) override;
     };
 }
 

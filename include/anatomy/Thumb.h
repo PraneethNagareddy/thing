@@ -21,12 +21,12 @@ namespace anatomy::hand {
             oppose_joint_(oppose_joint) {}
         ~Thumb() override = default;
 
-        [[nodiscard]] Status flex(Flexion flexion) const override;
-        [[nodiscard]] Status extend(Extension extension) const override;
-        [[nodiscard]] Status adduct(Adduction adduction) const override;
-        [[nodiscard]] Status abduct(Abduction abduction) const override;
-        [[nodiscard]] Status oppose(Opposition opposition) const override;
-        [[nodiscard]] Status repose(Reposition reposition) const override;
+        [[nodiscard]] Status flex(Flexion flexion) override;
+        [[nodiscard]] Status extend(Extension extension) override;
+        [[nodiscard]] Status adduct(Adduction adduction) override;
+        [[nodiscard]] Status abduct(Abduction abduction) override;
+        [[nodiscard]] Status oppose(Opposition opposition) override;
+        [[nodiscard]] Status repose(Reposition reposition) override;
     };
 }
 #endif //THING_THUMB_H

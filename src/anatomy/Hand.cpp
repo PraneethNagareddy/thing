@@ -16,8 +16,8 @@ using namespace articulation::movement;
 namespace anatomy::hand {
 
      void Hand::execute_finger_movement_(FingerMovement &movement) {
-          const Finger& finger = get_finger_(movement.finger);
-          std::visit( [finger](auto&& arg) {
+          Finger& finger = get_finger_(movement.finger);
+          std::visit( [&finger](auto&& arg) {
                using T = std::decay_t<decltype(arg)>;
                if constexpr (std::is_same_v<T, Flexion>) {
                     finger.flex(arg);

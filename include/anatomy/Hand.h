@@ -56,11 +56,11 @@ namespace anatomy::hand {
 
     public:
         explicit Hand(const Side side,
-                      const Finger &pinky,
-                      const Finger &ring_finger,
-                      const Finger &middle_finger,
-                      const Finger &index_finger,
-                      const Thumb &thumb) :
+            Finger &pinky,
+            Finger &ring_finger,
+            Finger &middle_finger,
+            Finger &index_finger,
+            Thumb &thumb) :
         side_(side),
         pinky_finger_(pinky),
         ring_finger_(ring_finger),
