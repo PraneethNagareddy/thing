@@ -9,6 +9,9 @@
 
 namespace telemetry {
     struct BaseReading {
+    protected:
+        explicit BaseReading(std::chrono::steady_clock::time_point timestamp) : timestamp(timestamp) {}
+    public:
         std::chrono::steady_clock::time_point timestamp;
     private:
     };

@@ -10,6 +10,14 @@
 
 
 namespace anatomy::hand {
+
+    enum class Fingers {
+        INDEX,
+        MIDDLE,
+        RING,
+        PINKY
+    };
+
     class Finger : articulation::IFlexible {
     private:
         articulation::Joint flex_joint_;
@@ -17,8 +25,8 @@ namespace anatomy::hand {
         explicit Finger(const articulation::Joint &joint) : flex_joint_(joint) {}
         ~Finger() override = default;
 
-        articulation::movement::Status flex(float movement_percentage) override;
-        articulation::movement::Status extend(float movement_percentage) override;
+        [[nodiscard]] articulation::movement::Status flex(articulation::movement::Flexion flexion) const override;
+        [[nodiscard]] articulation::movement::Status extend(articulation::movement::Extension extension) const override;
     };
 }
 

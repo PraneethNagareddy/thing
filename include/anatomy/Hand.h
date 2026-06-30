@@ -10,12 +10,17 @@
 #include <span>
 
 namespace anatomy::hand {
-    struct Movement {
-        int servo_id;
-        float to_location;
+    struct FingerMovement {
+        Fingers finger;
+        std::variant<Flexion, Extension> flex_value;
         float speed;
         float acceleration;
-        float start_delay;
+        float start_delay_ms;
+    };
+
+    struct ThumbMovement : FingerMovement {
+        std::variant<Adduction, Abduction>  spread_value;
+        std::variant<Opposition, Reposition> oppose_value;
     };
 
     enum class Side {
@@ -31,6 +36,24 @@ namespace anatomy::hand {
         Finger middle_finger_;
         Finger index_finger_;
         Thumb thumb_;
+
+        void apply_single_movement_(std::variant<FingerMovement,ThumbMovement> &movement);
+        void execute_finger_movement_(FingerMovement &movement);
+        void execute_thumb_movement_(ThumbMovement &movement);
+
+        Finger& get_finger_(const Fingers finger) {
+            switch (finger) {
+                case Fingers::INDEX:
+                    return index_finger_;
+                case Fingers::RING:
+                    return ring_finger_;
+                case Fingers::MIDDLE:
+                    return middle_finger_;
+                case Fingers::PINKY:
+                    return pinky_finger_;
+            }
+        }
+
     public:
         explicit Hand(const Side side,
                       const Finger &pinky,
@@ -45,7 +68,7 @@ namespace anatomy::hand {
         index_finger_(index_finger),
         thumb_(thumb){}
         ~Hand() = default;
-        void apply(std::span<Movement> movements);
+        void apply(std::span<std::variant<FingerMovement, ThumbMovement>> movements);
     };
 }
 

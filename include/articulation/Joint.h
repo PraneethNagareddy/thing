@@ -26,7 +26,7 @@ namespace articulation {
         full_flex_position_(full_flex_position),
         current_position_(default_position) {}
 
-        articulation::movement::Status move(float movement_percent);
+        movement::Status move(float movement_percent);
         telemetry::JointReading poll() override;
     };
 }

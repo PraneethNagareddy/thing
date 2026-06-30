@@ -5,24 +5,28 @@
 #ifndef THING_THUMB_H
 #define THING_THUMB_H
 
+#include<articulation/Motion.h>
+using namespace articulation;
+using namespace articulation::movement;
+
 namespace anatomy::hand {
-    class Thumb : public Finger, public articulation::ISpreadable ,  public articulation::IOpposable {
+    class Thumb : public Finger, public ISpreadable ,  public IOpposable {
     private:
-        articulation::Joint spread_joint_;
-        articulation::Joint oppose_joint_;
+        Joint spread_joint_;
+        Joint oppose_joint_;
     public:
-        Thumb(const articulation::Joint &flex_joint, const articulation::Joint &spread_joint, const articulation::Joint &oppose_joint) :
+        Thumb(const Joint &flex_joint, const Joint &spread_joint, const Joint &oppose_joint) :
             Finger(flex_joint),
             spread_joint_(spread_joint),
             oppose_joint_(oppose_joint) {}
         ~Thumb() override = default;
 
-        articulation::movement::Status flex(float movement_percentage) override;
-        articulation::movement::Status extend(float movement_percentage) override;
-        articulation::movement::Status adduct(float movement_percentage) override;
-        articulation::movement::Status abduct(float movement_percentage) override;
-        articulation::movement::Status oppose(float movement_percentage) override;
-        articulation::movement::Status repose(float movement_percentage) override;
+        [[nodiscard]] Status flex(Flexion flexion) const override;
+        [[nodiscard]] Status extend(Extension extension) const override;
+        [[nodiscard]] Status adduct(Adduction adduction) const override;
+        [[nodiscard]] Status abduct(Abduction abduction) const override;
+        [[nodiscard]] Status oppose(Opposition opposition) const override;
+        [[nodiscard]] Status repose(Reposition reposition) const override;
     };
 }
 #endif //THING_THUMB_H
