@@ -5,14 +5,17 @@
 #include "anatomy/Finger.h"
 #include "articulation/Joint.h"
 
+using namespace articulation;
+using namespace articulation::movement;
+
 namespace anatomy::hand {
 
-    articulation::movement::Status Finger::flex(float movement_percentage) {
-        return flex_joint_.move(movement_percentage);
+    Status Finger::flex(Flexion flexion) {
+        return flex_joint_.move_to(flexion.percentage);
     }
 
-    articulation::movement::Status Finger::extend(float movement_percentage) {
-        return flex_joint_.move(-movement_percentage);
+    Status Finger::extend(Extension extension) {
+        return flex_joint_.move_to(1.0f-extension.percentage);
     }
 
 }

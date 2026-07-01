@@ -5,6 +5,7 @@
 #ifndef THING_MOTION_H
 #define THING_MOTION_H
 #include <cassert>
+#include <iostream>
 
 namespace articulation {
     namespace movement {
@@ -15,6 +16,30 @@ namespace articulation {
             ERROR_HARDWARE,
             ERROR_UNKNOWN,
         };
+
+        inline std::ostream& operator<<(std::ostream& os, Status status) {
+            switch (status) {
+                case Status::SUCCESS:
+                    os << "SUCCESS";
+                    break;
+                case Status::STOPPED_BOUNDS_REACHED:
+                    os << "STOPPED_BOUNDS_REACHED";
+                    break;
+                case Status::STOPPED_FROZEN:
+                    os << "STOPPED_FROZEN";
+                    break;
+                case Status::ERROR_HARDWARE:
+                    os << "ERROR_HARDWARE";
+                    break;
+                case Status::ERROR_UNKNOWN:
+                    os << "ERROR_UNKNOWN";
+                    break;
+                default:
+                    os << "UNKNOWN_STATUS"; // Handle any unlisted values
+                    break;
+            }
+            return os;
+        }
 
         struct MovementValue {
         protected:

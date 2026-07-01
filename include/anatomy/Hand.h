@@ -38,8 +38,12 @@ namespace anatomy::hand {
         Thumb thumb_;
 
         void apply_single_movement_(std::variant<FingerMovement,ThumbMovement> &movement);
-        void execute_finger_movement_(FingerMovement &movement);
-        void execute_thumb_movement_(ThumbMovement &movement);
+        void apply_finger_movement_(FingerMovement &movement);
+        void apply_thumb_movement_(ThumbMovement &movement);
+
+        static void execute_flex(Finger &finger, FingerMovement movement);
+        static void execute_spread(Thumb &thumb, ThumbMovement movement);
+        static void execute_oppose(Thumb &thumb, ThumbMovement movement);
 
         Finger& get_finger_(const Fingers finger) {
             switch (finger) {
@@ -51,7 +55,13 @@ namespace anatomy::hand {
                     return middle_finger_;
                 case Fingers::PINKY:
                     return pinky_finger_;
+                case Fingers::THUMB:
+                    return thumb_;
             }
+        }
+
+        Thumb& get_thumb_() {
+            return thumb_;
         }
 
     public:

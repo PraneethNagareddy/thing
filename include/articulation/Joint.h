@@ -26,8 +26,8 @@ namespace articulation {
         full_flex_position_(full_flex_position),
         current_position_(default_position) {}
 
-        movement::Status move(float movement_percent);
-        telemetry::JointReading poll() override;
+        movement::Status move_to(float movement_percent);
+        const telemetry::JointReading poll() override;
     };
 }
 #endif //THING_JOINTS_H

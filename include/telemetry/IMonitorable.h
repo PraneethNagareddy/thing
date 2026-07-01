@@ -19,7 +19,7 @@ namespace telemetry {
     public:
         IMonitorable(const int frequency_hz = 25) : frequency_hz_(frequency_hz){};
         virtual ~IMonitorable() = default;
-        virtual M poll() = 0;
+        virtual const M poll() = 0;
     };
 }
 

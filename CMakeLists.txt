@@ -14,6 +14,8 @@ add_executable(thing main.cpp
         include/telemetry/Alert.h
         include/telemetry/Reading.h
         src/anatomy/Finger.cpp
-        src/anatomy/Hand.cpp)
+        src/anatomy/Hand.cpp
+        src/anatomy/Thumb.cpp
+        src/articulation/Joint.cpp)
 
 target_include_directories(thing PRIVATE include)

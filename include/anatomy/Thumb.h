@@ -6,6 +6,8 @@
 #define THING_THUMB_H
 
 #include<articulation/Motion.h>
+
+#include "Finger.h"
 using namespace articulation;
 using namespace articulation::movement;
 

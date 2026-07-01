@@ -40,13 +40,16 @@ namespace hardware {
         ~Servo();
         void move(float target_angle);
         void move(int target_step);
-        float currentAngle();
-        int currentStep();
-        float readLoad();
-        float readTemperature();
+        const float read_current_angle_degrees();
+        const int read_current_step();
+        const float read_load_percent();
+        const float read_temperature_celsius();
+        const int read_voltage_mv();
+        const float read_speed_steps_per_second();
+        const int read_id();
         void freeze();
         void unfreeze();
-        bool isMoving(long poll_interval_ms = 50, uint16_t threshold = 5);
+        const bool is_moving(long poll_interval_ms = 50, uint16_t threshold = 5);
     };
 
 }

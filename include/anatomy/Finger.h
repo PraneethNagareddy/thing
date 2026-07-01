@@ -15,11 +15,36 @@ namespace anatomy::hand {
         INDEX,
         MIDDLE,
         RING,
-        PINKY
+        PINKY,
+        THUMB
     };
 
+    inline std::ostream& operator<<(std::ostream& os, Fingers finger) {
+        switch (finger) {
+            case Fingers::PINKY:
+                os << "PINKY";
+                break;
+            case Fingers::RING:
+                os << "RING";
+                break;
+            case Fingers::INDEX:
+                os << "INDEX";
+                break;
+            case Fingers::MIDDLE:
+                os << "MIDDLE";
+                break;
+            case Fingers::THUMB:
+                os << "THUMB";
+                break;
+            default:
+                os << "UNKNOWN_FINGER"; // Handle any unlisted values
+                break;
+        }
+        return os;
+    }
+
     class Finger : articulation::IFlexible {
-    private:
+    protected:
         articulation::Joint flex_joint_;
     public:
         explicit Finger(const articulation::Joint &joint) : flex_joint_(joint) {}

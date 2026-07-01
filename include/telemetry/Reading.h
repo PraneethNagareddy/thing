@@ -19,12 +19,29 @@ namespace telemetry {
 
     struct JointReading : BaseReading {
         int servo_id{};
-        float temperature{};
+        float temperature_celsius{};
         float load_percentage{};
-        int voltage{};
+        int voltage_mv{};
         int current_step{};
-        int current_angle{};
-        int current_speed{};
+        float current_angle_degrees{};
+        float current_speed_steps_per_second{};
+
+        JointReading(std::chrono::steady_clock::time_point timestamp,
+                      int servo_id,
+                      float temperature_celsius,
+                      float load_percentage,
+                      int voltage_mv,
+                      int current_step,
+                      float current_angle_degrees,
+                      float current_speed_steps_per_second)
+             : BaseReading(timestamp),
+               servo_id(servo_id),
+               temperature_celsius(temperature_celsius),
+               load_percentage(load_percentage),
+               voltage_mv(voltage_mv),
+               current_step(current_step),
+               current_angle_degrees(current_angle_degrees),
+               current_speed_steps_per_second(current_speed_steps_per_second) {}
     };
 }
 
