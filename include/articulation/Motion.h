@@ -43,32 +43,33 @@ namespace articulation {
 
         struct MovementValue {
         protected:
-            explicit MovementValue(float percentage) : percentage(percentage) {
+            explicit MovementValue(float percentage, int time_ms) : percentage(percentage), time_to_execute_ms(time_ms) {
                 assert(percentage >= 0.0f && percentage <= 1.0f && "Move value should be a percentage value between 0.0f anf 1.0");
             }
         public:
             float percentage;
+            int time_to_execute_ms;
         private:
             MovementValue() = default;
         };
 
         struct Flexion : MovementValue {
-            explicit Flexion(float percent) : MovementValue(percent) {}
+            explicit Flexion(float percentage, int time_ms) : MovementValue(percentage, time_ms) {}
         };
         struct Extension : MovementValue {
-            explicit Extension(float percent) : MovementValue(percent) {}
+            explicit Extension(float percentage, int time_ms) : MovementValue(percentage, time_ms) {}
         };
         struct Adduction : MovementValue {
-            explicit Adduction(float percent) : MovementValue(percent) {}
+            explicit Adduction(float percentage, int time_ms) : MovementValue(percentage, time_ms) {}
         };
         struct Abduction : MovementValue {
-            explicit Abduction(float percent) : MovementValue(percent) {}
+            explicit Abduction(float percentage, int time_ms) : MovementValue(percentage, time_ms) {}
         };
         struct Opposition : MovementValue {
-            explicit Opposition(float percent) : MovementValue(percent) {}
+            explicit Opposition(float percentage, int time_ms) : MovementValue(percentage, time_ms) {}
         };
         struct Reposition : MovementValue {
-            explicit Reposition(float percent) : MovementValue(percent) {}
+            explicit Reposition(float percentage, int time_ms) : MovementValue(percentage, time_ms) {}
         };
     }
 

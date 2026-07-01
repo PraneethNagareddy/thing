@@ -10,6 +10,13 @@ using namespace articulation::movement;
 using namespace telemetry;
 
 namespace articulation {
+    Status Joint::move_to(const float movement_percent, const int time_to_execute_ms) {
+        const int target_step = 0;//TODO calculate number of steps to move based on min, max and percent
+        const float target_speed = 0.0f;//TODO calculate te speed based on the steps and time to execute_ms
+        servo_.move(target_step, target_speed);
+        return Status::SUCCESS;
+    }
+
     const JointReading Joint::poll() {
         const int servo_id = servo_.read_id();
         const float temperature_celsius = servo_.read_temperature_celsius();
@@ -30,6 +37,7 @@ namespace articulation {
                 speed_in_steps_per_second
             };
     }
+
 
 
 

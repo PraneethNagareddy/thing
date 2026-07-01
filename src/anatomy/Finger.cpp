@@ -11,11 +11,11 @@ using namespace articulation::movement;
 namespace anatomy::hand {
 
     Status Finger::flex(Flexion flexion) {
-        return flex_joint_.move_to(flexion.percentage);
+        return flex_joint_.move_to(flexion.percentage, flexion.time_to_execute_ms);
     }
 
     Status Finger::extend(Extension extension) {
-        return flex_joint_.move_to(1.0f-extension.percentage);
+        return flex_joint_.move_to(1.0f-extension.percentage, extension.time_to_execute_ms);
     }
 
 }
