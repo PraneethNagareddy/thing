@@ -31,13 +31,23 @@ namespace hardware {
         std::atomic<bool> frozen_{false};
         float max_speed_steps_per_sec_;
         float default_speed_factor_;
+        int max_degrees_;
+        int max_steps_;
     public:
-        Servo(uint8_t id, ServoType type = ServoType::SERIAL_BUS, CommunicationProtocol protocol = CommunicationProtocol::TTL, float max_speed_steps_per_sec = 2929.0f, float default_speed_factor = 1.0f) :
+        Servo(uint8_t id,
+            int max_degrees = 300,
+            int max_steps = 1023,
+            ServoType type = ServoType::SERIAL_BUS,
+            CommunicationProtocol protocol = CommunicationProtocol::TTL,
+            float max_speed_steps_per_sec = 2929.0f,
+            float default_speed_factor = 1.0f) :
             type_(type),
             protocol_(protocol),
             id_(id),
             max_speed_steps_per_sec_(max_speed_steps_per_sec),
-            default_speed_factor_(default_speed_factor) {
+            default_speed_factor_(default_speed_factor),
+            max_degrees_(max_degrees),
+            max_steps_(max_steps){
 
             assert(id >= 1 && id <= 253 && "Servo ID must be between 1 and 253!");
         }
@@ -53,6 +63,9 @@ namespace hardware {
         void freeze();
         void unfreeze();
         const bool is_moving(long poll_interval_ms = 50, uint16_t threshold = 5);
+        int deg_to_steps(float deg) {
+            return int(round(std::max(0.0f, std::min(static_cast<float>(max_degrees_), deg)) / max_degrees_ * max_steps_));
+        }
     };
 
 }
