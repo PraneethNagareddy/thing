@@ -10,15 +10,16 @@
 namespace telemetry {
     struct BaseReading {
     protected:
-        explicit BaseReading(std::chrono::steady_clock::time_point timestamp) : timestamp(timestamp) {}
+        explicit BaseReading(int monitorable_id, std::chrono::steady_clock::time_point timestamp) : monitorable_id(monitorable_id),timestamp(timestamp) {}
     public:
+        int monitorable_id{};
         std::chrono::steady_clock::time_point timestamp;
+        virtual ~BaseReading() = default;
     private:
         BaseReading() = default;
     };
 
     struct JointReading : BaseReading {
-        int servo_id{};
         float temperature_celsius{};
         float load_percentage{};
         int voltage_mv{};
@@ -27,15 +28,14 @@ namespace telemetry {
         float current_speed_steps_per_second{};
 
         JointReading(std::chrono::steady_clock::time_point timestamp,
-                      int servo_id,
-                      float temperature_celsius,
-                      float load_percentage,
-                      int voltage_mv,
-                      int current_step,
-                      float current_angle_degrees,
-                      float current_speed_steps_per_second)
-             : BaseReading(timestamp),
-               servo_id(servo_id),
+                     int monitorable_id,
+                     float temperature_celsius,
+                     float load_percentage,
+                     int voltage_mv,
+                     int current_step,
+                     float current_angle_degrees,
+                     float current_speed_steps_per_second)
+             : BaseReading(monitorable_id, timestamp),
                temperature_celsius(temperature_celsius),
                load_percentage(load_percentage),
                voltage_mv(voltage_mv),

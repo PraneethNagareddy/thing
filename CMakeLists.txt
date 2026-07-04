@@ -11,13 +11,21 @@ add_executable(thing main.cpp
         include/anatomy/Finger.h
         include/anatomy/Thumb.h
         include/telemetry/IMonitorable.h
-        include/telemetry/Alert.h
+        include/telemetry/alert/Alert.h
         include/telemetry/Reading.h
         src/anatomy/Finger.cpp
         src/anatomy/Hand.cpp
         src/anatomy/Thumb.cpp
         src/articulation/Joint.cpp
-        include/telemetry/TelemetryManager.h
+        src/telemetry/TelemetryManager.cpp
+        src/telemetry/alert/ReadingEvaluator.cpp
+        include/telemetry/alert/AlertRule.h
+        include/telemetry/alert/AlertRulesFactory.h
+        src/telemetry/alert/AlertRulesFactory.cpp
+        include/telemetry/alert/ReadingEvaluator.h
+        include/telemetry/logging/LiveLogger.h
+        src/telemetry/logger/LiveLogger.cpp
+        include/utility/Utils.h
 )
 
 target_include_directories(thing PRIVATE include)

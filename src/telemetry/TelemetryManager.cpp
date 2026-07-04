@@ -1,9 +1,6 @@
 //
 // Created by Nagareddy on 03/07/26.
 //
-
-#ifndef THING_TELEMETRYMANAGER_H
-#define THING_TELEMETRYMANAGER_H
 #include <vector>
 #include <algorithm>
 #include <concepts>
@@ -13,6 +10,7 @@
 #include <chrono>
 #include <condition_variable>
 #include "telemetry/IMonitorable.h"
+#include "telemetry/alert/ReadingEvaluator.h"
 
 namespace telemetry {
 
@@ -29,8 +27,8 @@ namespace telemetry {
         static void start_monitoring_thread(IMonitorable<M>* monitorable) {
             threads_[monitorable] = std::jthread([monitorable](std::stop_token stop_token) {
                 while (!stop_token.stop_requested()) {
-                    monitorable->poll();
-                    
+                    const M reading = monitorable->poll();
+                    ReadingEvaluator::evaluate(reading);
                     // Use a local condition variable or simple sleep to avoid blocking
                     // the TelemetryManager's ability to register/unregister other objects.
                     auto interval = std::chrono::milliseconds(monitorable->get_polling_interval_ms());
@@ -46,9 +44,9 @@ namespace telemetry {
             if (!monitorable) return;
 
             std::lock_guard<std::mutex> lock(registry_mutex);
-            
+
             // Prevent duplicate registration
-            if (std::find(monitorables_.begin(), monitorables_.end(), monitorable) != monitorables.end()) return;
+            if (std::find(monitorables_.begin(), monitorables_.end(), monitorable) != monitorables_.end()) return;
 
             monitorables_.push_back(monitorable);
 
@@ -100,5 +98,3 @@ namespace telemetry {
         TelemetryManager<M>::unregister_monitorable(this);
     }
 }
-
-#endif //THING_TELEMETRYMANAGER_H
