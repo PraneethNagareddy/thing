@@ -1,7 +1,10 @@
 #include <iostream>
 
 #include "telemetry/alert/ReadingEvaluator.h"
+
+#include "telemetry/alert/AlertHandler.h"
 #include "telemetry/alert/AlertRulesFactory.h"
+#include "telemetry/logging/LiveLogger.h"
 
 namespace telemetry::alert {
     std::vector<Alert> ReadingEvaluator::process_reading(const BaseReading& reading) {
@@ -16,10 +19,13 @@ namespace telemetry::alert {
     }
 
     void ReadingEvaluator::evaluate(const BaseReading& reading) {
+        // Log the reading to the Live Dashboard
+        logging::LiveLogger::getInstance().log(reading);
+
         auto alerts = process_reading(reading);
         for (const auto& alert : alerts) {
-            // Example Sink: Log to console
-            std::cout << "[ALERT] " << alert.message << std::endl;
+            // Handle Alerts
+            AlertHandler::getInstance().handle(alert);
         }
     }
 }

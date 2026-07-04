@@ -26,6 +26,8 @@ add_executable(thing main.cpp
         include/telemetry/logging/LiveLogger.h
         src/telemetry/logger/LiveLogger.cpp
         include/utility/Utils.h
+        include/telemetry/alert/AlertHandler.h
+        src/telemetry/alert/AlertHandler.cpp
 )
 
 target_include_directories(thing PRIVATE include)
