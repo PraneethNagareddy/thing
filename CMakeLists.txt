@@ -28,6 +28,12 @@ add_executable(thing main.cpp
         include/utility/Utils.h
         include/telemetry/alert/AlertHandler.h
         src/telemetry/alert/AlertHandler.cpp
+        include/hardware/SerialBus.h
+        include/hardware/FeetechServo.h
+        include/hardware/SCS0009.h
+        src/hardware/SCS0009.cpp
+        src/hardware/MacSerialBus.cpp
+        include/hardware/LinuxSerialBus.h
 )
 
 target_include_directories(thing PRIVATE include)

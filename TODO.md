@@ -7,7 +7,7 @@
         *   Number of times to repeat the gesture (-1 for infinite, until killed).
         *   Delay between each iteration of the gesture.
 
-2.  **Hardware Level Communication for Feetech SCS0009 Servos:**
+2.  **Hardware Level Communication for Feetech SCS0009 Servos (DONE):**
     *   Implement a custom low-level communication layer for interacting with Feetech SCS0009 serial bus servos.
     *   This will involve sending and receiving data packets according to the Feetech Serial Bus Protocol (e.g., setting position, reading feedback).
 
