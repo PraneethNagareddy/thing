@@ -43,6 +43,7 @@ add_executable(thing main.cpp
         include/gestures/Gestures.h
         include/articulation/Easing.h
         src/control/CommandLineController.cpp
+        src/hardware/bus/LinuxSerialBus.cpp
 )
 
 target_include_directories(thing PRIVATE include)

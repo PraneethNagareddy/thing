@@ -18,7 +18,7 @@ namespace hardware {
         static constexpr uint8_t INST_READ  = 0x02;
         static constexpr uint8_t INST_WRITE = 0x03;
 
-        static uint8_t calculate_checksum(uint8_t id, uint8_t length, uint8_t inst, const std::vector<uint8_t>& params) ;
+        static uint8_t calculate_checksum(uint8_t id, uint8_t length, uint8_t inst, const std::vector<uint8_t>& params);
 
         bool send_packet(uint8_t id, uint8_t inst, const std::vector<uint8_t>& params) const;
 

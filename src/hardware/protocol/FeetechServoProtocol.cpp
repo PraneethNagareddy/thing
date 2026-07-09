@@ -60,4 +60,11 @@ namespace hardware {
         return static_cast<int16_t>((res[0] << 8) | res[1]);
     }
 
+    int8_t FeetechServoProtocol::read8(uint8_t id, uint8_t reg) const {
+        if (!send_packet(id, INST_READ, {reg, 1})) return -1;
+        auto res = receive_packet(id, 1);
+        if (res.size() != 1) return -1;
+        return static_cast<int8_t>(res[0]);
+    }
+
 }
