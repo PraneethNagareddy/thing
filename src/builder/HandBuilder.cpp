@@ -34,7 +34,7 @@ namespace builder {
      std::shared_ptr<Joint> HandBuilder::create_monitored_joint(
          const std::string& name, uint8_t id, float no_flex_angle, float full_flex_angle, float default_angle) {
 
-         auto servo = std::make_shared<hardware::SCS0009Servo>(id, name, hardware::constants::MAC_SERIAL_BUS);
+         auto servo = std::make_shared<hardware::SCS0009Servo>(id, name, hardware::constants::DEFAULT_SCS0009_PROTOCOL);
          auto joint = std::make_shared<Joint>(servo, id, no_flex_angle, full_flex_angle, default_angle);
          // Wire into the Telemetry system
          telemetry::TelemetryManager<telemetry::JointReading>::register_monitorable(joint.get());

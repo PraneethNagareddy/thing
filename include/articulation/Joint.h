@@ -6,7 +6,7 @@
 #define THING_JOINTS_H
 #include <memory>
 #include "Motion.h"
-#include "hardware/SCS0009Servo.h"
+#include "../hardware/servo/SCS0009Servo.h"
 #include "telemetry/IMonitorable.h"
 namespace articulation {
     class Joint : public telemetry::IMonitorable<telemetry::JointReading> {

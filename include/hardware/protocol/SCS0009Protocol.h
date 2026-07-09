@@ -25,32 +25,33 @@ namespace hardware {
         static constexpr uint8_t REG_PRESENT_VOLTAGE  = 0x3E;
         static constexpr uint8_t REG_PRESENT_TEMP     = 0x3F;
 
-    protected:
+    public:
         using FeetechServoProtocol::FeetechServoProtocol;
+        virtual ~SCS0009Protocol() = default;
 
         // --- Command Methods ---
-        bool set_torque_enable(uint8_t id, bool enable) const;
+        virtual bool set_torque_enable(uint8_t id, bool enable) const;
 
-        bool move_steps(uint8_t id, uint16_t steps) const;
+        virtual bool move_steps(uint8_t id, uint16_t steps) const;
 
-        bool set_speed(uint8_t id, uint16_t speed) const;
+        virtual bool set_speed(uint8_t id, uint16_t speed) const;
 
-        bool set_eproom_lock(uint8_t id, bool lock) const;
+        virtual bool set_eproom_lock(uint8_t id, bool lock) const;
 
         // --- Read Methods ---
-        int16_t read_present_position(uint8_t id) const;
-        int16_t read_present_speed(uint8_t id) const;
-        int16_t read_present_load(uint8_t id) const;
+        virtual int16_t read_present_position(uint8_t id) const;
+        virtual int16_t read_present_speed(uint8_t id) const;
+        virtual int16_t read_present_load(uint8_t id) const;
 
-        float read_voltage(uint8_t id);
+        virtual float read_voltage(uint8_t id);
 
-        int8_t read_temperature(uint8_t id);
+        virtual int8_t read_temperature(uint8_t id);
 
-        std::pair<int16_t, int16_t> read_angle_limits(uint8_t id);
+        virtual std::pair<int16_t, int16_t> read_angle_limits(uint8_t id);
 
-        int16_t read_max_torque(uint8_t id);
+        virtual int16_t read_max_torque(uint8_t id);
 
-        bool is_eproom_locked(uint8_t id);
+        virtual bool is_eproom_locked(uint8_t id);
     };
 }
 

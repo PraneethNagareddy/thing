@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(thing main.cpp
         include/articulation/Motion.h
         include/articulation/Joint.h
-        include/hardware/SCS0009Servo.h
+        include/hardware/servo/SCS0009Servo.h
         include/anatomy/Hand.h
         include/anatomy/Finger.h
         include/anatomy/Thumb.h
@@ -36,9 +36,10 @@ add_executable(thing main.cpp
         include/builder/HandBuilder.h
         src/builder/HandBuilder.cpp
         src/hardware/protocol/FeetechServoProtocol.cpp
-        src/hardware/SCS0009Servo.cpp
+        src/hardware/servo/SCS0009Servo.cpp
         include/telemetry/TelemetryManager.h
         include/articulation/Constants.h
+        include/hardware/protocol/DummySCS0009ConsoleProtocol.h
 )
 
 target_include_directories(thing PRIVATE include)

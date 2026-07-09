@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <utility>
 
-#include "protocol/SCS0009Protocol.h"
+#include "../protocol/SCS0009Protocol.h"
 
 namespace hardware {
 
@@ -19,18 +19,12 @@ namespace hardware {
         SERIAL_BUS
     };
 
-    enum class CommunicationProtocol {
-        PWM,
-        TTL,
-        RS485,
-    };
-
-    class SCS0009Servo : public SCS0009Protocol{
+    class SCS0009Servo {
     private:
         std::string name_;
         ServoType type_;
-        CommunicationProtocol protocol_;
         uint8_t id_;
+        std::shared_ptr<SCS0009Protocol> protocol_;
         std::atomic<bool> frozen_{false};
         float max_speed_steps_per_sec_;
         float default_speed_factor_;
@@ -39,16 +33,14 @@ namespace hardware {
     public:
         SCS0009Servo(uint8_t id,
             std::string name,
-            std::shared_ptr<SerialBus> bus,
+            std::shared_ptr<SCS0009Protocol> protocol,
             int max_degrees = 300,
             int max_steps = 1023,
             ServoType type = ServoType::SERIAL_BUS,
-            CommunicationProtocol protocol = CommunicationProtocol::TTL,
             float max_speed_steps_per_sec = 2929.0f,
-            float default_speed_factor = 1.0f) : SCS0009Protocol(std::move(bus)),
-                                                 type_(type),
+            float default_speed_factor = 1.0f) : type_(type),
                                                  name_(std::move(name)),
-                                                 protocol_(protocol),
+                                                 protocol_(std::move(protocol)),
                                                  id_(id),
                                                  max_speed_steps_per_sec_(max_speed_steps_per_sec),
                                                  default_speed_factor_(default_speed_factor),
