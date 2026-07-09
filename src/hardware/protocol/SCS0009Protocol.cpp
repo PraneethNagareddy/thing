@@ -30,21 +30,21 @@ namespace hardware {
         return read16(id, REG_PRESENT_LOAD);
     }
 
-    float SCS0009Protocol::read_voltage(uint8_t id) {
+    float SCS0009Protocol::read_voltage(uint8_t id) const {
         int8_t v = read8(id, REG_PRESENT_VOLTAGE);
         if (v == -1) return -1.0f;
         return static_cast<float>(v) / 10.0f; // Standard Feetech scaling: 1 unit = 0.1V
     }
 
-    int8_t SCS0009Protocol::read_temperature(uint8_t id) {
+    int8_t SCS0009Protocol::read_temperature(uint8_t id) const {
         return read8(id, REG_PRESENT_TEMP);
     }
 
-    int16_t SCS0009Protocol::read_max_torque(uint8_t id) {
+    int16_t SCS0009Protocol::read_max_torque(uint8_t id) const {
         return read16(id, REG_MAX_TORQUE);
     }
 
-    bool SCS0009Protocol::is_eproom_locked(uint8_t id) {
+    bool SCS0009Protocol::is_eproom_locked(uint8_t id) const {
         return read8(id, REG_LOCK) == 1;
     }
 }

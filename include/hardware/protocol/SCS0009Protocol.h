@@ -43,15 +43,15 @@ namespace hardware {
         virtual int16_t read_present_speed(uint8_t id) const;
         virtual int16_t read_present_load(uint8_t id) const;
 
-        virtual float read_voltage(uint8_t id);
+        virtual float read_voltage(uint8_t id) const;
 
-        virtual int8_t read_temperature(uint8_t id);
+        virtual int8_t read_temperature(uint8_t id) const;
 
-        virtual std::pair<int16_t, int16_t> read_angle_limits(uint8_t id);
+        virtual std::pair<int16_t, int16_t> read_angle_limits(uint8_t id) const;
 
-        virtual int16_t read_max_torque(uint8_t id);
+        virtual int16_t read_max_torque(uint8_t id) const;
 
-        virtual bool is_eproom_locked(uint8_t id);
+        virtual bool is_eproom_locked(uint8_t id) const;
     };
 }
 

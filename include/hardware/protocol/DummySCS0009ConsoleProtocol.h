@@ -26,7 +26,7 @@ namespace hardware {
             return true;
         }
 
-        bool set_eeprom_lock(uint8_t id, bool lock) const override {
+        bool set_eproom_lock(uint8_t id, bool lock) const override {
             std::cout << "[MOCK] Servo " << (int)id << " EEPROM: " << (lock ? "LOCKED" : "UNLOCKED") << std::endl;
             return true;
         }
@@ -59,7 +59,7 @@ namespace hardware {
             return 1023; // Return max possible torque cap
         }
 
-        bool is_eeprom_locked(uint8_t id) const override {
+        bool is_eproom_locked(uint8_t id) const override {
             return true;
         }
 
