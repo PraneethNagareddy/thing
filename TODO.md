@@ -34,3 +34,7 @@
 
 8.  **Alert Integration:**
     *   Add AlertHandler callbacks and tie things in the Hand Builder class.
+
+9.  **Motion Smoothing & Easing Integration:**
+    *   Figure out how easing can still honor the `time_ms` constraint (e.g., by normalizing elapsed time $t$ against total duration).
+    *   Determine the optimal execution point for the `easing::apply` function (e.g., within a high-frequency loop in `Joint::move` or `Hand::apply`).
