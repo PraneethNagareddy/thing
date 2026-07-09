@@ -1,4 +1,4 @@
-#include "../../../include/hardware/protocol/SCS0009Protocol.h"
+#include "hardware/protocol/SCS0009Protocol.h"
 
 namespace hardware {
 

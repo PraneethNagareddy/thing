@@ -1,4 +1,4 @@
-#include "../../../include/hardware/protocol/FeetechServoProtocol.h"
+#include "hardware/protocol/FeetechServoProtocol.h"
 #include <numeric>
 
 namespace hardware {
