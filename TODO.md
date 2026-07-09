@@ -11,7 +11,7 @@
     *   Implement a custom low-level communication layer for interacting with Feetech SCS0009 serial bus servos.
     *   This will involve sending and receiving data packets according to the Feetech Serial Bus Protocol (e.g., setting position, reading feedback).
 
-3.  **Hand Builder Class:**
+3.  **Hand Builder Class (DONE):**
     *   Create a builder class responsible for instantiating `Servo` objects.
     *   This class will construct and configure the entire `Hand` object, making it ready for operation and gesture execution.
 

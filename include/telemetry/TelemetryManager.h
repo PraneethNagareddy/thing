@@ -1,6 +1,9 @@
 //
-// Created by Nagareddy on 03/07/26.
+// Created by Nagareddy on 09/07/26.
 //
+
+#ifndef THING_TELEMETRYMANAGER_H
+#define THING_TELEMETRYMANAGER_H
 #include <vector>
 #include <algorithm>
 #include <concepts>
@@ -58,7 +61,7 @@ namespace telemetry {
 
         static void unregister_monitorable(IMonitorable<M>* monitorable) {
             std::lock_guard<std::mutex> lock(registry_mutex);
-            
+
             monitorables_.erase(
                 std::remove(monitorables_.begin(), monitorables_.end(), monitorable),
                 monitorables_.end()
@@ -71,7 +74,7 @@ namespace telemetry {
         static void start() {
             std::lock_guard<std::mutex> lock(registry_mutex);
             if (is_running) return;
-            
+
             is_running = true;
             for (auto* m : monitorables_) {
                 start_monitoring_thread(m);
@@ -80,21 +83,23 @@ namespace telemetry {
     };
 }
 
+//
+// /**
+//  * Implementations for IMonitorable methods that depend on TelemetryManager.
+//  * These are defined here to ensure the compiler has the full definition of TelemetryManager.
+//  */
+// namespace telemetry {
+//     template <typename M>
+//     requires std::derived_from<M, BaseReading>
+//     inline void IMonitorable<M>::start_monitoring() {
+//         TelemetryManager<M>::register_monitorable(this);
+//     }
+//
+//     template <typename M>
+//     requires std::derived_from<M, BaseReading>
+//     inline void IMonitorable<M>::stop_monitoring() {
+//         TelemetryManager<M>::unregister_monitorable(this);
+//     }
+// }
 
-/**
- * Implementations for IMonitorable methods that depend on TelemetryManager.
- * These are defined here to ensure the compiler has the full definition of TelemetryManager.
- */
-namespace telemetry {
-    template <typename M>
-    requires std::derived_from<M, BaseReading>
-    inline void IMonitorable<M>::start_monitoring() {
-        TelemetryManager<M>::register_monitorable(this);
-    }
-
-    template <typename M>
-    requires std::derived_from<M, BaseReading>
-    inline void IMonitorable<M>::stop_monitoring() {
-        TelemetryManager<M>::unregister_monitorable(this);
-    }
-}
+#endif //THING_TELEMETRYMANAGER_H

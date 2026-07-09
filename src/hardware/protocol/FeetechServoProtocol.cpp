@@ -1,15 +1,15 @@
-#include "hardware/FeetechServo.h"
+#include "../../../include/hardware/protocol/FeetechServoProtocol.h"
 #include <numeric>
 
 namespace hardware {
 
-    uint8_t FeetechServo::calculate_checksum(uint8_t id, uint8_t length, uint8_t inst, const std::vector<uint8_t>& params) {
+    uint8_t FeetechServoProtocol::calculate_checksum(uint8_t id, uint8_t length, uint8_t inst, const std::vector<uint8_t>& params) {
         uint32_t sum = id + length + inst;
         for (uint8_t p : params) sum += p;
         return static_cast<uint8_t>(~(sum & 0xFF));
     }
 
-    bool FeetechServo::send_packet(uint8_t id, uint8_t inst, const std::vector<uint8_t>& params) {
+    bool FeetechServoProtocol::send_packet(uint8_t id, uint8_t inst, const std::vector<uint8_t>& params) const {
         if (!bus_) return false;
 
         uint8_t length = static_cast<uint8_t>(params.size() + 2);
@@ -21,7 +21,7 @@ namespace hardware {
         return bus_->write(packet);
     }
 
-    std::vector<uint8_t> FeetechServo::receive_packet(uint8_t id, size_t expected_params) {
+    std::vector<uint8_t> FeetechServoProtocol::receive_packet(uint8_t id, size_t expected_params) const {
         if (!bus_) return {};
 
         // Response format: FF FF ID LEN ERR PARAMS... CHK
@@ -44,16 +44,16 @@ namespace hardware {
         return params;
     }
 
-    bool FeetechServo::write8(uint8_t id, uint8_t reg, uint8_t value) {
+    bool FeetechServoProtocol::write8(uint8_t id, uint8_t reg, uint8_t value) const {
         return send_packet(id, INST_WRITE, {reg, value});
     }
 
-    bool FeetechServo::write16(uint8_t id, uint8_t reg, uint16_t value) {
+    bool FeetechServoProtocol::write16(uint8_t id, uint8_t reg, uint16_t value) const {
         // Feetech uses Big-Endian (High byte first)
         return send_packet(id, INST_WRITE, {reg, static_cast<uint8_t>(value >> 8), static_cast<uint8_t>(value & 0xFF)});
     }
 
-    int16_t FeetechServo::read16(uint8_t id, uint8_t reg) {
+    int16_t FeetechServoProtocol::read16(uint8_t id, uint8_t reg) const {
         if (!send_packet(id, INST_READ, {reg, 2})) return -1;
         auto res = receive_packet(id, 2);
         if (res.size() != 2) return -1;

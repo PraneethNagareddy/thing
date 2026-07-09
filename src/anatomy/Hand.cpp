@@ -57,8 +57,9 @@ namespace anatomy::hand {
                std::cerr<< "Unsupported finger type " <<movement.finger << " in executing fingermovement" <<std::endl;
                return;
           }
-          Finger& finger = get_finger_(movement.finger);
-          execute_flex(finger, movement);
+          if (Finger* finger = get_finger_(movement.finger)) {
+               execute_flex(*finger, movement);
+          }
      }
 
      void Hand::apply_thumb_movement_(ThumbMovement &movement) {
@@ -66,10 +67,11 @@ namespace anatomy::hand {
                std::cerr<< "Unsupported finger type " <<movement.finger << " in executing fingermovement" <<std::endl;
                return;
           }
-          Thumb& thumb = get_thumb_();
-          execute_flex(thumb, movement);
-          execute_spread(thumb, movement);
-          execute_oppose(thumb, movement);
+          if (Thumb* thumb = get_thumb_()) {
+               execute_flex(*thumb, movement);
+               execute_spread(*thumb, movement);
+               execute_oppose(*thumb, movement);
+          }
      }
 
      void Hand::apply_single_movement_(std::variant<FingerMovement,ThumbMovement> &movement) {
@@ -87,14 +89,10 @@ namespace anatomy::hand {
           if (movements.empty()) {
                return;
           }
-          std::vector<std::thread> active_movement_threads;
+          std::vector<std::jthread> active_movement_threads; //Joinable threads that are auto-joined.
+          active_movement_threads.reserve(movements.size());
           for (const auto& movement : movements) {
                active_movement_threads.emplace_back(&Hand::apply_single_movement_, this, movement);
-          }
-          for (auto& t : active_movement_threads) {
-               if (t.joinable()) {
-                    t.join();
-               }
           }
           std::cout << "All individual movement threads have completed their tasks." << std::endl;
      }

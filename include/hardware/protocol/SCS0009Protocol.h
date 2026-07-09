@@ -5,11 +5,11 @@
 #ifndef THING_SCS0009_H
 #define THING_SCS0009_H
 
-#include "FeetechServo.h"
+#include "FeetechServoProtocol.h"
 
 namespace hardware {
 
-    class SCS0009 : public FeetechServo {
+    class SCS0009Protocol : public FeetechServoProtocol {
     private:
         // Register Map
         static constexpr uint8_t REG_MIN_ANGLE_LIMIT  = 0x09;
@@ -25,22 +25,22 @@ namespace hardware {
         static constexpr uint8_t REG_PRESENT_VOLTAGE  = 0x3E;
         static constexpr uint8_t REG_PRESENT_TEMP     = 0x3F;
 
-    public:
-        using FeetechServo::FeetechServo;
+    protected:
+        using FeetechServoProtocol::FeetechServoProtocol;
 
         // --- Command Methods ---
-        bool set_torque_enable(uint8_t id, bool enable);
+        bool set_torque_enable(uint8_t id, bool enable) const;
 
-        bool move_steps(uint8_t id, uint16_t steps);
+        bool move_steps(uint8_t id, uint16_t steps) const;
 
-        bool set_speed(uint8_t id, uint16_t speed);
+        bool set_speed(uint8_t id, uint16_t speed) const;
 
-        bool set_eproom_lock(uint8_t id, bool lock);
+        bool set_eproom_lock(uint8_t id, bool lock) const;
 
         // --- Read Methods ---
-        int16_t read_present_position(uint8_t id);
-        int16_t read_present_speed(uint8_t id);
-        int16_t read_present_load(uint8_t id);
+        int16_t read_present_position(uint8_t id) const;
+        int16_t read_present_speed(uint8_t id) const;
+        int16_t read_present_load(uint8_t id) const;
 
         float read_voltage(uint8_t id);
 

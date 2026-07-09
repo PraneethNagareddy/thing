@@ -7,7 +7,9 @@
 
 #include "Finger.h"
 #include "Thumb.h"
+#include <memory>
 #include <span>
+#include <utility>
 
 namespace anatomy::hand {
     struct FingerMovement {
@@ -31,11 +33,11 @@ namespace anatomy::hand {
     class Hand {
     private:
         Side side_;
-        Finger pinky_finger_;
-        Finger ring_finger_;
-        Finger middle_finger_;
-        Finger index_finger_;
-        Thumb thumb_;
+        std::shared_ptr<Finger> pinky_finger_;
+        std::shared_ptr<Finger> ring_finger_;
+        std::shared_ptr<Finger> middle_finger_;
+        std::shared_ptr<Finger> index_finger_;
+        std::shared_ptr<Thumb> thumb_;
 
         void apply_single_movement_(std::variant<FingerMovement,ThumbMovement> &movement);
         void apply_finger_movement_(FingerMovement &movement);
@@ -45,38 +47,39 @@ namespace anatomy::hand {
         static void execute_spread(Thumb &thumb, ThumbMovement movement);
         static void execute_oppose(Thumb &thumb, ThumbMovement movement);
 
-        Finger& get_finger_(const Fingers finger) {
+        [[nodiscard]] Finger* get_finger_(const Fingers finger) const {
             switch (finger) {
                 case Fingers::INDEX:
-                    return index_finger_;
+                    return index_finger_.get();
                 case Fingers::RING:
-                    return ring_finger_;
+                    return ring_finger_.get();
                 case Fingers::MIDDLE:
-                    return middle_finger_;
+                    return middle_finger_.get();
                 case Fingers::PINKY:
-                    return pinky_finger_;
+                    return pinky_finger_.get();
                 case Fingers::THUMB:
-                    return thumb_;
+                    return thumb_.get();
             }
+            return nullptr;
         }
 
-        Thumb& get_thumb_() {
-            return thumb_;
+        [[nodiscard]] Thumb* get_thumb_() const {
+            return thumb_.get();
         }
 
     public:
-        explicit Hand(const Side side,
-            Finger &pinky,
-            Finger &ring_finger,
-            Finger &middle_finger,
-            Finger &index_finger,
-            Thumb &thumb) :
+        explicit Hand(Side side,
+            std::shared_ptr<Finger> pinky,
+            std::shared_ptr<Finger> ring_finger,
+            std::shared_ptr<Finger> middle_finger,
+            std::shared_ptr<Finger> index_finger,
+            std::shared_ptr<Thumb> thumb) :
         side_(side),
-        pinky_finger_(pinky),
-        ring_finger_(ring_finger),
-        middle_finger_(middle_finger),
-        index_finger_(index_finger),
-        thumb_(thumb){}
+        pinky_finger_(std::move(pinky)),
+        ring_finger_(std::move(ring_finger)),
+        middle_finger_(std::move(middle_finger)),
+        index_finger_(std::move(index_finger)),
+        thumb_(std::move(thumb)) {}
         ~Hand() = default;
         void apply(std::span<std::variant<FingerMovement, ThumbMovement>> movements);
     };

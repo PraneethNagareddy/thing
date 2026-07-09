@@ -8,6 +8,9 @@
 #include <cassert>
 #include <string>
 #include <stdexcept>
+#include <utility>
+
+#include "protocol/SCS0009Protocol.h"
 
 namespace hardware {
 
@@ -22,7 +25,7 @@ namespace hardware {
         RS485,
     };
 
-    class Servo {
+    class SCS0009Servo : public SCS0009Protocol{
     private:
         std::string name_;
         ServoType type_;
@@ -34,24 +37,27 @@ namespace hardware {
         int max_degrees_;
         int max_steps_;
     public:
-        Servo(uint8_t id,
+        SCS0009Servo(uint8_t id,
+            std::string name,
+            std::shared_ptr<SerialBus> bus,
             int max_degrees = 300,
             int max_steps = 1023,
             ServoType type = ServoType::SERIAL_BUS,
             CommunicationProtocol protocol = CommunicationProtocol::TTL,
             float max_speed_steps_per_sec = 2929.0f,
-            float default_speed_factor = 1.0f) :
-            type_(type),
-            protocol_(protocol),
-            id_(id),
-            max_speed_steps_per_sec_(max_speed_steps_per_sec),
-            default_speed_factor_(default_speed_factor),
-            max_degrees_(max_degrees),
-            max_steps_(max_steps){
-
+            float default_speed_factor = 1.0f) : SCS0009Protocol(std::move(bus)),
+                                                 type_(type),
+                                                 name_(std::move(name)),
+                                                 protocol_(protocol),
+                                                 id_(id),
+                                                 max_speed_steps_per_sec_(max_speed_steps_per_sec),
+                                                 default_speed_factor_(default_speed_factor),
+                                                 max_degrees_(max_degrees),
+                                                 max_steps_(max_steps) {
             assert(id >= 1 && id <= 253 && "Servo ID must be between 1 and 253!");
         }
-        ~Servo();
+
+        ~SCS0009Servo();
         void move(int target_step, float target_speed_steps_per_sec);
         const float read_current_angle_degrees();
         const int read_current_step();

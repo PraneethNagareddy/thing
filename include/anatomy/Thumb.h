@@ -14,13 +14,13 @@ using namespace articulation::movement;
 namespace anatomy::hand {
     class Thumb : public Finger, public ISpreadable ,  public IOpposable {
     private:
-        Joint spread_joint_;
-        Joint oppose_joint_;
+        std::shared_ptr<Joint> spread_joint_;
+        std::shared_ptr<Joint> oppose_joint_;
     public:
-        Thumb(const Joint &flex_joint, const Joint &spread_joint, const Joint &oppose_joint) :
-            Finger(flex_joint),
-            spread_joint_(spread_joint),
-            oppose_joint_(oppose_joint) {}
+        Thumb(std::shared_ptr<Joint> flex_joint, std::shared_ptr<Joint> spread_joint, std::shared_ptr<Joint> oppose_joint) :
+            Finger(Fingers::THUMB, std::move(flex_joint)),
+            spread_joint_(std::move(spread_joint)),
+            oppose_joint_(std::move(oppose_joint)) {}
         ~Thumb() override = default;
 
         [[nodiscard]] Status flex(Flexion flexion) override;
