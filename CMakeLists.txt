@@ -40,6 +40,9 @@ add_executable(thing main.cpp
         include/telemetry/TelemetryManager.h
         include/articulation/Constants.h
         include/hardware/protocol/DummySCS0009ConsoleProtocol.h
+        include/gestures/Gestures.h
+        include/articulation/Easing.h
+        src/control/CommandLineController.cpp
 )
 
 target_include_directories(thing PRIVATE include)

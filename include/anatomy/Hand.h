@@ -12,15 +12,34 @@
 #include <utility>
 
 namespace anatomy::hand {
+
+    enum class Easing {
+        LINEAR,
+        SINE,
+        QUADRATIC,
+        CUBIC,
+        EXPONENTIAL,
+        CIRCULAR
+    };
+
     struct FingerMovement {
         Fingers finger;
         std::variant<Flexion, Extension> flex_value;
-        float speed;
-        float acceleration;
-        float start_delay_ms;
+        float start_delay_ms = 0.0f;
+        Easing easing = Easing::LINEAR;
     };
 
     struct ThumbMovement : FingerMovement {
+        ThumbMovement(std::variant<Flexion, Extension> flex_value,
+            std::variant<Adduction, Abduction> spread_value,
+            std::variant<Opposition, Reposition> oppose_value,
+            float start_delay_ms = 0.0f,
+            Easing easing = Easing::LINEAR) :
+                    FingerMovement(Fingers::THUMB, flex_value, start_delay_ms, easing),
+                    spread_value(spread_value),
+                    oppose_value(oppose_value) {
+        }
+
         std::variant<Adduction, Abduction>  spread_value;
         std::variant<Opposition, Reposition> oppose_value;
     };

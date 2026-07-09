@@ -1,7 +1,7 @@
 # Project TODO List
 
-1.  **Gestures Class and Interface:**
-    *   Define a `Gestures` class and an interface (`IGesture`).
+1.  **Gestures Class and Interface (IN PROGRESS):**
+    *   Define a `Gestures` class.
     *   Each gesture definition should include:
         *   A set of `Movement` struct objects (or a similar sequence of movements).
         *   Number of times to repeat the gesture (-1 for infinite, until killed).
@@ -15,7 +15,7 @@
     *   Create a builder class responsible for instantiating `Servo` objects.
     *   This class will construct and configure the entire `Hand` object, making it ready for operation and gesture execution.
 
-4.  **Controller Class:**
+4.  **Controller Class (IN PROGRESS):**
     *   Implement a `Controller` class.
     *   Initially, this class will take control commands via the command line (e.g., for testing gestures).
     *   Future implementation should allow taking commands from a camera or other external input.
