@@ -58,13 +58,17 @@ namespace hardware {
     }
 
     void SCS0009Servo::freeze() {
-        frozen_.store(true);
-        protocol_->set_torque_enable(id_, false);
+        // Only send hardware command if we are transitioning from NOT frozen to frozen
+        if (!frozen_.exchange(true)) {
+            protocol_->set_torque_enable(id_, false);
+        }
     }
 
     void SCS0009Servo::unfreeze() {
-        frozen_.store(false);
-        protocol_->set_torque_enable(id_, true);
+        // Only send hardware command if we are transitioning from frozen to NOT frozen
+        if (frozen_.exchange(false)) {
+            protocol_->set_torque_enable(id_, true);
+        }
     }
 
     const bool SCS0009Servo::is_moving(long poll_interval_ms, uint16_t threshold) {
