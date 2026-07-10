@@ -11,6 +11,7 @@
 #include <mutex>
 #include <unordered_map>
 #include <chrono>
+#include <map>
 #include <condition_variable>
 #include "telemetry/IMonitorable.h"
 #include "telemetry/alert/ReadingEvaluator.h"
@@ -23,6 +24,7 @@ namespace telemetry {
     class TelemetryManager {
     private:
         static inline std::vector<telemetry::IMonitorable<M>*> monitorables_;
+        static inline std::map<uint8_t, IMonitorable<M>*> monitorable_objects_map_;
         static inline std::unordered_map<IMonitorable<M>*, std::jthread> threads_;
         static inline std::mutex registry_mutex;
         static inline bool is_running = false;
@@ -43,8 +45,13 @@ namespace telemetry {
         }
 
     public:
-        static void register_monitorable(IMonitorable<M>* monitorable) {
+        static void register_monitorable(const uint8_t id, IMonitorable<M>* monitorable) {
             if (!monitorable) return;
+            // Check if a monitorable with this ID already exists
+            if (monitorable_objects_map_.count(id)) {
+                throw std::runtime_error("Monitorable with ID " + std::to_string(id) + " already registered.");
+            }
+            monitorable_objects_map_[id] = monitorable;
 
             std::lock_guard<std::mutex> lock(registry_mutex);
 
@@ -60,6 +67,26 @@ namespace telemetry {
         }
 
         static void unregister_monitorable(IMonitorable<M>* monitorable) {
+            if (!monitorable) return;
+            // Find the ID associated with the monitorable pointer
+            uint8_t found_id = 0;
+            bool found_in_map = false;
+            for (auto const& [id, ptr] : monitorable_objects_map_) {
+                if (ptr == monitorable) {
+                    found_id = id;
+                    found_in_map = true;
+                    break;
+                }
+            }
+
+            if (!found_in_map) {
+                // Monitorable not found in the primary map, nothing to unregister.
+                return;
+            }
+
+            // Remove from monitorable_objects_map_
+            monitorable_objects_map_.erase(found_id);
+
             std::lock_guard<std::mutex> lock(registry_mutex);
 
             monitorables_.erase(
@@ -79,6 +106,21 @@ namespace telemetry {
             for (auto* m : monitorables_) {
                 start_monitoring_thread(m);
             }
+        }
+
+        static void stop() {
+            is_running = false;
+            for (auto* m : monitorables_) {
+                unregister_monitorable(m);
+            }
+        }
+
+        static IMonitorable<M>* get_monitorable(const uint8_t id) {
+            return monitorable_objects_map_[id];
+        }
+
+        static IMonitorable<M>* get_all_monitorables() {
+            return monitorables_;
         }
     };
 }

@@ -8,12 +8,7 @@
 
 namespace telemetry::alert {
 
-    AlertHandler::AlertHandler() {
-        // Default handler: All LOG actions go to the LiveLogger automatically
-        register_action_handler(SuggestedAction::LOG, [](const Alert& alert) {
-            logging::LiveLogger::getInstance().log(alert);
-        });
-    }
+    AlertHandler::AlertHandler() = default;
 
     void AlertHandler::register_action_handler(SuggestedAction action, ActionCallback callback) {
         std::lock_guard<std::mutex> lock(handler_mutex_);

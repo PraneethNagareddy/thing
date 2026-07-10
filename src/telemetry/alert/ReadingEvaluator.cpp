@@ -20,12 +20,12 @@ namespace telemetry::alert {
 
     void ReadingEvaluator::evaluate(const BaseReading& reading) {
         // Log the reading to the Live Dashboard
-        logging::LiveLogger::getInstance().log(reading);
+        logging::LiveLogger::get_instance().log(reading);
 
         auto alerts = process_reading(reading);
         for (const auto& alert : alerts) {
             // Handle Alerts
-            AlertHandler::getInstance().handle(alert);
+            AlertHandler::get_instance().handle(alert);
         }
     }
 }

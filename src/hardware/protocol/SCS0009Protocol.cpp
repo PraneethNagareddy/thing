@@ -30,6 +30,10 @@ namespace hardware {
         return read16(id, REG_PRESENT_LOAD);
     }
 
+    std::pair<int16_t, int16_t> SCS0009Protocol::read_angle_limits(uint8_t id) const {
+        return {read16(id, REG_MIN_ANGLE_LIMIT), read16(id, REG_MAX_ANGLE_LIMIT)};
+    }
+
     float SCS0009Protocol::read_voltage(uint8_t id) const {
         int8_t v = read8(id, REG_PRESENT_VOLTAGE);
         if (v == -1) return -1.0f;

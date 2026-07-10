@@ -159,7 +159,8 @@ namespace telemetry::alert {
         .build();
     }
 
-    static std::vector<AlertRule > get() {
+
+    std::vector<AlertRule > AlertRulesFactory::get() {
         return {
             getCriticalTemperatureAlertRule(),
             getHighTemperatureAlertRule(),

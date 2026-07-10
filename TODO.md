@@ -1,6 +1,6 @@
 # Project TODO List
 
-1.  **Gestures Class and Interface (IN PROGRESS):**
+1.  **Gestures Class and Interface (DONE):**
     *   Define a `Gestures` class.
     *   Each gesture definition should include:
         *   A set of `Movement` struct objects (or a similar sequence of movements).
@@ -15,7 +15,7 @@
     *   Create a builder class responsible for instantiating `Servo` objects.
     *   This class will construct and configure the entire `Hand` object, making it ready for operation and gesture execution.
 
-4.  **Controller Class (IN PROGRESS):**
+4.  **Controller Class (DONE):**
     *   Implement a `Controller` class.
     *   Initially, this class will take control commands via the command line (e.g., for testing gestures).
     *   Future implementation should allow taking commands from a camera or other external input.
@@ -32,9 +32,13 @@
     *   Establish a framework for defining thresholds for various joint parameters (e.g., position limits, pressure limits).
     *   These thresholds will be utilized by the `TelemetryManager` to determine when an alert needs to be created.
 
-8.  **Alert Integration:**
-    *   Add AlertHandler callbacks and tie things in the Hand Builder class.
+8.  **Alert Integration (DONE):**
+    *   Add AlertHandler callbacks and tie things in the Main class.
 
 9.  **Motion Smoothing & Easing Integration:**
     *   Figure out how easing can still honor the `time_ms` constraint (e.g., by normalizing elapsed time $t$ against total duration).
     *   Determine the optimal execution point for the `easing::apply` function (e.g., within a high-frequency loop in `Joint::move` or `Hand::apply`).
+
+10. **Add more gestures support and make them available in controller:**
+    *   Support more gestures.
+    *   Expose these gestures in controller.

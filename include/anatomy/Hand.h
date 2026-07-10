@@ -58,7 +58,7 @@ namespace anatomy::hand {
         std::shared_ptr<Finger> index_finger_;
         std::shared_ptr<Thumb> thumb_;
 
-        void apply_single_movement_(std::variant<FingerMovement,ThumbMovement> &movement);
+        void apply_single_movement_(std::variant<FingerMovement,ThumbMovement> movement);
         void apply_finger_movement_(FingerMovement &movement);
         void apply_thumb_movement_(ThumbMovement &movement);
 

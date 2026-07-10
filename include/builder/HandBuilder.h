@@ -23,7 +23,7 @@ namespace builder {
          * Assembles the joints and fingers into a complete Hand object.
          * Automatically registers all joints for telemetry monitoring.
          */
-        static std::unique_ptr<anatomy::hand::Hand> build();
+        static std::shared_ptr<anatomy::hand::Hand> build();
 
     private:
         // Helper to create a joint and register it for monitoring

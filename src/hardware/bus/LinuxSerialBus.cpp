@@ -25,8 +25,8 @@ namespace hardware {
         switch (baudrate_) {
             case 9600:   speed = B9600;   break;
             case 115200: speed = B115200; break;
-            case 1000000: speed = B1000000; break;
-            default:     speed = B1000000; break;
+            case 1000000: speed = B115200; break;
+            default:     speed = B115200; break;
         }
 
         cfsetispeed(&options, speed);

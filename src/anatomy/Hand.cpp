@@ -74,7 +74,7 @@ namespace anatomy::hand {
           }
      }
 
-     void Hand::apply_single_movement_(std::variant<FingerMovement,ThumbMovement> &movement) {
+     void Hand::apply_single_movement_(std::variant<FingerMovement,ThumbMovement> movement) {
           std::visit([this](auto&& arg) {
                using T = std::decay_t<decltype(arg)>;
                if constexpr (std::is_same_v<T, FingerMovement>) {

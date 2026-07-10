@@ -1,18 +1,128 @@
 #include <iostream>
+#include <utility>
+#include <builder/HandBuilder.h>
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+#include "control/CommandLineController.h"
+#include "telemetry/TelemetryManager.h"
+#include "telemetry/alert/AlertHandler.h"
+#include "telemetry/logging/LiveLogger.h"
+
+
+void register_log_action() {
+    using namespace telemetry::alert;
+    auto log_action = [](const Alert& alert) {
+        telemetry::logging::LiveLogger::get_instance().log(alert);
+    };
+    AlertHandler::get_instance().register_action_handler(SuggestedAction::LOG, log_action);
+}
+
+void register_shutdown_action() {
+    using namespace telemetry::alert;
+    using namespace telemetry;
+    auto shutdown_action = [](const Alert& alert) {
+        std::exit(EXIT_FAILURE);
+    };
+    AlertHandler::get_instance().register_action_handler(SuggestedAction::SHUTDOWN, shutdown_action);
+}
+
+ void register_freeze_action() {
+     using namespace telemetry::alert;
+     using namespace telemetry;
+     AlertHandler::get_instance().register_action_handler(SuggestedAction::FREEZE, [](const Alert& alert) {
+         if (alert.reading) {
+             IMonitorable<JointReading> *monitorable_joint = TelemetryManager<JointReading>::get_monitorable(
+                  alert.reading->monitorable_id);
+              if (auto joint = dynamic_cast<Joint*>(monitorable_joint)) { // Safely cast to Joint*
+                  joint->freeze();
+              }
+         }
+     });
+ }
+
+ void register_unfreeze_action() {
+     using namespace telemetry::alert;
+     using namespace telemetry;
+     AlertHandler::get_instance().register_action_handler(SuggestedAction::UNFREEZE, [](const Alert& alert) {
+         if (alert.reading) {
+             IMonitorable<JointReading> *monitorable_joint = TelemetryManager<JointReading>::get_monitorable(
+                  alert.reading->monitorable_id);
+              if (auto joint = dynamic_cast<Joint*>(monitorable_joint)) { // Safely cast to Joint*
+                  joint->unfreeze();
+              }
+         }
+     });
+ }
+
+ void register_reset_action() {
+     using namespace telemetry::alert;
+     using namespace telemetry;
+     AlertHandler::get_instance().register_action_handler(SuggestedAction::RESET, [](const Alert& alert) {
+         if (alert.reading) {
+             IMonitorable<JointReading> *monitorable_joint = TelemetryManager<JointReading>::get_monitorable(
+                  alert.reading->monitorable_id);
+              if (auto joint = dynamic_cast<Joint*>(monitorable_joint)) { // Safely cast to Joint*
+                  joint->unfreeze(); // Ensure it's not frozen so it can move
+                  joint->reset();
+              }
+         }
+     });
+ }
+
+ void register_throttle_action() {
+     using namespace telemetry::alert;
+     using namespace telemetry;
+     AlertHandler::get_instance().register_action_handler(SuggestedAction::THROTTLE, [](const Alert& alert) {
+         if (alert.reading) {
+             IMonitorable<JointReading> *monitorable_joint = TelemetryManager<JointReading>::get_monitorable(
+                  alert.reading->monitorable_id);
+              if (auto joint = dynamic_cast<Joint*>(monitorable_joint)) { // Safely cast to Joint*
+                  joint->unfreeze(); // Ensure it's not frozen so it can move
+                  joint->throttle();
+              }
+         }
+     });
+ }
+
+ void register_unthrottle_action() {
+     using namespace telemetry::alert;
+     using namespace telemetry;
+     AlertHandler::get_instance().register_action_handler(SuggestedAction::UNTHROTTLE, [](const Alert& alert) {
+         if (alert.reading) {
+             IMonitorable<JointReading> *monitorable_joint = TelemetryManager<JointReading>::get_monitorable(
+                  alert.reading->monitorable_id);
+              if (auto joint = dynamic_cast<Joint*>(monitorable_joint)) { // Safely cast to Joint*
+                  joint->unfreeze(); // Ensure it's not frozen so it can move
+                  joint->unthrottle();
+              }
+         }
+     });
+ }
+
+
+void register_alert_actions() {
+    register_log_action();
+    register_shutdown_action();
+    register_freeze_action();
+    register_reset_action();
+    register_throttle_action();
+    register_unthrottle_action();
+    register_unfreeze_action();
+}
+
+void initialize_telemetry() {
+    telemetry::TelemetryManager<telemetry::JointReading>::start();
+}
+
+void initialize_controller(std::shared_ptr<anatomy::hand::Hand> hand) {
+    // Create an instance of the CommandLineController
+    // We need to pass the hand object to the controller so it can execute movements
+    auto controller = control::CommandLineController(std::move(hand));
+    controller.start(); // Start the controller's main loop
+}
 
 int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the <b>lang</b> variable name to see how CLion can help you rename it.
-
-    const auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
-
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
-    }
-
-    return 0;
-    // TIP See CLion help at <a href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>. Also, you can try interactive lessons for CLion by selecting 'Help | Learn IDE Features' from the main menu.
+    std::shared_ptr<anatomy::hand::Hand> hand = builder::HandBuilder::build();
+    register_alert_actions();
+    initialize_telemetry();
+    initialize_controller(hand);
 }

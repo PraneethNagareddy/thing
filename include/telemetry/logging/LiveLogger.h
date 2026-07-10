@@ -29,7 +29,7 @@ namespace telemetry::logging {
         LiveLogger() = default;
 
     public:
-        static LiveLogger& getInstance() {
+        static LiveLogger& get_instance() {
             static LiveLogger instance;
             return instance;
         }

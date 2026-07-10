@@ -21,7 +21,7 @@ namespace telemetry::alert {
     public:
         using ActionCallback = std::function<void(const Alert&)>;
 
-        static AlertHandler& getInstance() {
+        static AlertHandler& get_instance() {
             static AlertHandler instance;
             return instance;
         }

@@ -12,7 +12,7 @@ namespace hardware {
         if (frozen_.load()) return;
 
         // Set speed first, then move
-        protocol_->set_speed(id_, static_cast<uint16_t>(target_speed_steps_per_sec));
+        protocol_->set_speed(id_, static_cast<uint16_t>(target_speed_steps_per_sec * speed_factor_));
         protocol_->move_steps(id_, static_cast<uint16_t>(target_step));
     }
 
@@ -79,5 +79,13 @@ namespace hardware {
 
         if (pos1 == -1 || pos2 == -1) return false;
         return std::abs(pos1 - pos2) > threshold;
+    }
+
+    void SCS0009Servo::throttle() {
+        speed_factor_ = 0.5f;
+    }
+
+    void SCS0009Servo::unthrottle() {
+        speed_factor_ = 1.0f;
     }
 }

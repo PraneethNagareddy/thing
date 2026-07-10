@@ -37,7 +37,7 @@ namespace builder {
          auto servo = std::make_shared<hardware::SCS0009Servo>(id, name, hardware::constants::DEFAULT_SCS0009_PROTOCOL);
          auto joint = std::make_shared<Joint>(servo, id, no_flex_angle, full_flex_angle, default_angle);
          // Wire into the Telemetry system
-         telemetry::TelemetryManager<telemetry::JointReading>::register_monitorable(joint.get());
+         telemetry::TelemetryManager<telemetry::JointReading>::register_monitorable(id, joint.get());
          return joint;
      }
 
@@ -75,7 +75,7 @@ namespace builder {
          return thumb;
      }
 
-     std::unique_ptr<anatomy::hand::Hand> HandBuilder::build() {
+     std::shared_ptr<anatomy::hand::Hand> HandBuilder::build() {
 
          auto pinky_finger = build_standard_finger(anatomy::hand::Fingers::PINKY, 7, constants::PINKY_FINGER_NO_FLEX_ANGLE, constants::PINKY_FINGER_FULL_FLEX_ANGLE);
          auto ring_finger = build_standard_finger(anatomy::hand::Fingers::RING, 6, constants::RING_FINGER_NO_FLEX_ANGLE, constants::RING_FINGER_FULL_FLEX_ANGLE);
@@ -83,7 +83,7 @@ namespace builder {
          auto index_finger = build_standard_finger(anatomy::hand::Fingers::INDEX, 4, constants::INDEX_FINGER_NO_FLEX_ANGLE, constants::INDEX_FINGER_FULL_FLEX_ANGLE);
          auto thumb = build_thumb();
 
-         auto right_hand = std::make_unique<anatomy::hand::Hand>(anatomy::hand::Side::RIGHT,
+         auto right_hand = std::make_shared<anatomy::hand::Hand>(anatomy::hand::Side::RIGHT,
              pinky_finger,
              ring_finger,
              middle_finger,

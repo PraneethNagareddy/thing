@@ -18,10 +18,34 @@ namespace articulation {
         target_angle = std::clamp(target_angle, no_flex_angle_, full_flex_angle_);
         const int target_step = servo_->deg_to_steps(target_angle);
         const int current_step = servo_->read_current_step();
-        const float target_speed = static_cast<float>(abs(target_step - current_step)) / (static_cast<float>(time_to_execute_ms)/1000.0f);//TODO calculate te speed based on the steps and time to execute_ms
+        const float target_speed = static_cast<float>(abs(target_step - current_step)) / (static_cast<float>(time_to_execute_ms)/1000.0f);
         servo_->move(target_step, target_speed);
         //read current step and decide the status to return
         return Status::SUCCESS;
+    }
+
+    void Joint::disable() const {
+        servo_->freeze();
+    }
+
+    void Joint::freeze() const {
+        servo_->freeze();
+    }
+
+    void Joint::unfreeze() const {
+        servo_->unfreeze();
+    }
+
+    void Joint::reset() {
+        move_to_default();
+    }
+
+    void Joint::throttle() const {
+        servo_->throttle();
+    }
+
+    void Joint::unthrottle() const {
+        servo_->unthrottle();
     }
 
     const JointReading Joint::poll() {

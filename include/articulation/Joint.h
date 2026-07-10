@@ -33,6 +33,16 @@ namespace articulation {
 
         movement::Status move_to(float movement_percent, int time_to_execute_ms);
         const telemetry::JointReading poll() override;
+
+        void freeze() const;
+        void unfreeze() const;
+        void throttle() const;
+        void unthrottle() const;
+        void reset();
+        void disable() const;
+        void move_to_default() {
+            move_to(0.0f, 1000);
+        }
     };
 }
 #endif //THING_JOINTS_H
