@@ -146,10 +146,10 @@ namespace telemetry::alert {
     static AlertRule getCriticalHighVoltageAlert() {
         return AlertRule::Builder<JointReading>()
         .with_evaluator([](const JointReading& r) -> std::optional<Alert> {
-            if (r.voltage_mv >= 6000) {
+            if (r.voltage_mv >= 7000) {
                 return Alert{
                     .reading = &r,
-                    .message = "Servo at critical low voltage: " + std::to_string(r.voltage_mv),
+                    .message = "Servo at critical high voltage: " + std::to_string(r.voltage_mv),
                     .level = SeverityLevel::CRITICAL,
                     .actions = {SuggestedAction::SHUTDOWN,SuggestedAction::LOG}
                 };

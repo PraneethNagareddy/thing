@@ -21,8 +21,8 @@ namespace articulation::constants {
     inline constexpr float THUMB_FLEXION_NO_FLEX_ANGLE = 135.0f;
     inline constexpr float THUMB_FLEXION_FULL_FLEX_ANGLE = 60.0f;
 
-    inline constexpr float THUMB_SPREAD_NO_FLEX_ANGLE = 150.0f;
-    inline constexpr float THUMB_SPREAD_FULL_FLEX_ANGLE = 50.0f;
+    inline constexpr float THUMB_SPREAD_NO_FLEX_ANGLE = 35.0f;
+    inline constexpr float THUMB_SPREAD_FULL_FLEX_ANGLE = 100.0f;
 
     inline constexpr float THUMB_OPPOSITION_NO_FLEX_ANGLE = 270.0f;
     inline constexpr float THUMB_OPPOSITION_FULL_FLEX_ANGLE = 180.0f;

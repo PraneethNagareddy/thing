@@ -42,6 +42,21 @@ namespace gestures {
                 }
             };
         }
+
+        /**
+         * Reset All: Returns all fingers and the thumb to their default (0% flexion) positions.
+         */
+        static std::vector<Movement> reset_all() {
+            using namespace anatomy::hand;
+            using namespace articulation::movement;
+            return {
+                FingerMovement{Fingers::INDEX,  Flexion{0.0f, 1000}},
+                FingerMovement{Fingers::MIDDLE, Flexion{0.0f, 1000}},
+                FingerMovement{Fingers::RING,   Flexion{0.0f, 1000}},
+                FingerMovement{Fingers::PINKY,  Flexion{0.0f, 1000}},
+                ThumbMovement{Flexion{0.0f, 1000}, Adduction{0.0f, 1000}, Opposition{0.0f, 1000}}
+            };
+        }
     };
 
 }

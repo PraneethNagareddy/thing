@@ -123,6 +123,6 @@ void initialize_controller(std::shared_ptr<anatomy::hand::Hand> hand) {
 int main() {
     std::shared_ptr<anatomy::hand::Hand> hand = builder::HandBuilder::build();
     register_alert_actions();
-    initialize_telemetry();
+    //initialize_telemetry();
     initialize_controller(hand);
 }

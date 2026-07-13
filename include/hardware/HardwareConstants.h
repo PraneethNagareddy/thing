@@ -9,7 +9,7 @@
 
 namespace hardware::constants {
 
-    inline const std::string DEFAULT_MAC_PORT = "/dev/cu.usbserial-110";
+    inline const std::string DEFAULT_MAC_PORT = "/dev/cu.usbserial-1320";
     inline constexpr int DEFAULT_BAUD_RATE = 1000000; // 1 Mbps
 
     /**
@@ -27,7 +27,7 @@ namespace hardware::constants {
     inline auto SCS0009_PROTOCOL = std::make_shared<hardware::SCS0009Protocol>(DEFAULT_SERIAL_BUS);
     inline auto SCS0009_DUMMY_CONSOLE_PROTOCOL = std::make_shared<hardware::DummySCS0009ConsoleProtocol>(DEFAULT_SERIAL_BUS);
 
-    inline auto DEFAULT_SCS0009_PROTOCOL = SCS0009_DUMMY_CONSOLE_PROTOCOL;
+    inline auto DEFAULT_SCS0009_PROTOCOL = SCS0009_PROTOCOL;
 }
 
 #endif //THING_HARDWARECONSTANTS_H

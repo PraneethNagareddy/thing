@@ -25,7 +25,13 @@ namespace hardware {
         std::vector<uint8_t> receive_packet(uint8_t id, size_t expected_params) const;
 
     public:
-        explicit FeetechServoProtocol(std::shared_ptr<SerialBus> bus) : bus_(std::move(bus)) {}
+        explicit FeetechServoProtocol(std::shared_ptr<SerialBus> bus) : bus_(std::move(bus)) {
+            bus_->open();
+        }
+
+        ~FeetechServoProtocol() {
+            bus_->close();
+        }
 
         bool write8(uint8_t id, uint8_t reg, uint8_t value) const;
 

@@ -21,31 +21,33 @@ namespace hardware {
         fd_ = ::open(device_.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK);
         if (fd_ == -1) return false;
 
-        // Remove non-blocking flag for normal operation
-        fcntl(fd_, F_SETFL, 0);
+        // Ensure we are in blocking mode for standard operations after open
+        if (fcntl(fd_, F_SETFL, 0) == -1) return false;
 
         struct termios options{};
-        tcgetattr(fd_, &options);
+        if (tcgetattr(fd_, &options) == -1) return false;
 
-        // Set basic attributes
+        // cfmakeraw sets the most critical flags for high-speed binary protocols
         cfmakeraw(&options);
-        options.c_cflag |= (CLOCAL | CREAD | CS8);
-        options.c_cflag &= ~(PARENB | CSTOPB | CSIZE);
+
+        options.c_cflag |= (CLOCAL | CREAD);
+        options.c_iflag &= ~(IXON | IXOFF | IXANY); // Disable software flow control
+        options.c_cc[VMIN] = 0;  // Non-blocking read (we use select)
+        options.c_cc[VTIME] = 0;
         
-        // Set standard baud rates first
+        // Set standard baud rates as a fallback
         speed_t std_speed = B9600;
         if (baudrate_ == 115200) std_speed = B115200;
-        
         cfsetispeed(&options, std_speed);
         cfsetospeed(&options, std_speed);
 
-        tcsetattr(fd_, TCSANOW, &options);
+        if (tcsetattr(fd_, TCSANOW, &options) == -1) return false;
 
-        // macOS specific: set high-speed baud rates via ioctl
+        // macOS specific: set high-speed baud rates (1Mbps) via ioctl
         speed_t speed = static_cast<speed_t>(baudrate_);
-        if (ioctl(fd_, IOSSIOSPEED, &speed) == -1) {
-            // If 1Mbps fails, we fall back to what was set in termios
-        }
+        ioctl(fd_, IOSSIOSPEED, &speed);
+
+        tcflush(fd_, TCIOFLUSH); // Clear any power-on junk or noise
 
         return true;
     }
@@ -60,14 +62,19 @@ namespace hardware {
     bool MacSerialBus::write(const std::vector<uint8_t>& data) {
         if (fd_ == -1) return false;
         ssize_t sent = ::write(fd_, data.data(), data.size());
-        return sent == static_cast<ssize_t>(data.size());
+        if (sent != static_cast<ssize_t>(data.size())) return false;
+        
+        // In half-duplex TTL, we MUST wait for the bytes to physically leave the 
+        // hardware buffer before we can safely flush the echo or start reading.
+        tcdrain(fd_); 
+        return true;
     }
 
     std::vector<uint8_t> MacSerialBus::read(size_t length, int timeout_ms) {
         std::vector<uint8_t> buffer;
         if (fd_ == -1) return buffer;
 
-        buffer.reserve(length);
+        buffer.resize(length);
         size_t total_read = 0;
 
         while (total_read < length) {
@@ -83,14 +90,17 @@ namespace hardware {
             int rv = select(fd_ + 1, &set, nullptr, nullptr, &timeout);
             if (rv <= 0) break; 
 
-            uint8_t byte;
-            if (::read(fd_, &byte, 1) > 0) {
-                buffer.push_back(byte);
-                total_read++;
-            } else {
-                break;
+            // Efficiency: Read as many bytes as possible in one system call
+            // instead of byte-by-byte, which is prone to jitter at 1Mbps.
+            ssize_t n = ::read(fd_, &buffer[total_read], length - total_read);
+            if (n > 0) {
+                total_read += n;
+            } else if (n < 0 && errno != EAGAIN) {
+                break; // Real error
             }
         }
+        
+        buffer.resize(total_read);
         return buffer;
     }
 
