@@ -16,7 +16,6 @@ namespace telemetry::alert {
     enum class SuggestedAction {
         LOG,
         SHUTDOWN,
-        DISABLE,
         FREEZE,
         RESET,
         THROTTLE,

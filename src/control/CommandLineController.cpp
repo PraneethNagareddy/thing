@@ -70,8 +70,11 @@ namespace control {
                     std::cout << "\n--- Servo Telemetry (ID: " << id << ") ---" << std::endl;
                     std::cout << std::fixed << std::setprecision(2);
                     std::cout << "  Position:    " << DEFAULT_SCS0009_PROTOCOL->read_present_position(id) << " steps" << std::endl;
-                    std::cout << "  Load:       " << DEFAULT_SCS0009_PROTOCOL->read_present_load(id) << "°" << std::endl;
-                    std::cout << "  Temperature: " << DEFAULT_SCS0009_PROTOCOL->read_temperature(id) << " °C" << std::endl;
+                    // Mask Bit 10 (direction) and scale 0-1023 to 0-100%
+                    float load_pct = static_cast<float>(DEFAULT_SCS0009_PROTOCOL->read_present_load(id) & 0x3FF) / 10.23f;
+                    std::cout << "  Load:        " << load_pct << " %" << std::endl;
+                    // Cast int8_t to int so cout prints the number 25 instead of the ASCII character
+                    std::cout << "  Temperature: " << static_cast<int>(DEFAULT_SCS0009_PROTOCOL->read_temperature(id)) << " °C" << std::endl;
                     std::cout << "  Voltage:     " << DEFAULT_SCS0009_PROTOCOL->read_voltage(id) << " mV" << std::endl;
                     std::cout << "------------------------------------" << std::endl;
                 }

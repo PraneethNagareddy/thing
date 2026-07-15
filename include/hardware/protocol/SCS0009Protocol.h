@@ -52,6 +52,8 @@ namespace hardware {
         virtual int16_t read_max_torque(uint8_t id) const;
 
         virtual bool is_eproom_locked(uint8_t id) const;
+
+        bool write_pos_speed(uint8_t id, uint16_t pos, uint16_t speed) const;
     };
 }
 

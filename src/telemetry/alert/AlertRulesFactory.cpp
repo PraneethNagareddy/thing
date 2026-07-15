@@ -116,7 +116,7 @@ namespace telemetry::alert {
     static AlertRule getNormalLoadAlertRule() {
         return AlertRule::Builder<JointReading>()
         .with_evaluator([](const JointReading& r) -> std::optional<Alert> {
-            if (r.load_percentage > 85.0) {
+            if (r.load_percentage < 70.0) {
                 return Alert{
                     .reading = &r,
                     .message = "Servo at high load: " + std::to_string(r.load_percentage),
@@ -136,7 +136,7 @@ namespace telemetry::alert {
                     .reading = &r,
                     .message = "Servo at critical low voltage: " + std::to_string(r.voltage_mv),
                     .level = SeverityLevel::CRITICAL,
-                    .actions = {SuggestedAction::DISABLE,SuggestedAction::LOG}
+                    .actions = {SuggestedAction::SHUTDOWN,SuggestedAction::LOG}
                 };
             }
             return std::nullopt;

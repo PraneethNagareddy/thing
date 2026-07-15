@@ -57,6 +57,10 @@ namespace anatomy::hand {
                std::cerr<< "Unsupported finger type " <<movement.finger << " in executing fingermovement" <<std::endl;
                return;
           }
+          // Respect the start delay before proceeding with the movement
+          if (movement.start_delay_ms > 0.0f) {
+               std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(movement.start_delay_ms));
+          }
           if (Finger* finger = get_finger_(movement.finger)) {
                execute_flex(*finger, movement);
           }
@@ -66,6 +70,9 @@ namespace anatomy::hand {
           if (movement.finger != Fingers::THUMB) {
                std::cerr<< "Unsupported finger type " <<movement.finger << " in executing fingermovement" <<std::endl;
                return;
+          }
+          if (movement.start_delay_ms > 0.0f) {
+               std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(movement.start_delay_ms));
           }
           if (Thumb* thumb = get_thumb_()) {
                execute_flex(*thumb, movement);

@@ -51,4 +51,15 @@ namespace hardware {
     bool SCS0009Protocol::is_eproom_locked(uint8_t id) const {
         return read8(id, REG_LOCK) == 1;
     }
+    
+    bool SCS0009Protocol::write_pos_speed(uint8_t id, uint16_t pos, uint16_t speed) const {
+        std::vector<uint8_t> params = {
+            REG_GOAL_POSITION,
+            static_cast<uint8_t>(pos >> 8), static_cast<uint8_t>(pos & 0xFF),
+            0x00, 0x00, // Goal Time (0x2C) - set to 0
+            static_cast<uint8_t>(speed >> 8), static_cast<uint8_t>(speed & 0xFF)
+        };
+        return send_packet(id, 0x03, params);
+    }
+
 }

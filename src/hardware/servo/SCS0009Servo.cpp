@@ -29,8 +29,11 @@ namespace hardware {
     const float SCS0009Servo::read_load_percent() {
         int16_t load = protocol_->read_present_load(id_);
         if (load == -1) return -1.0f;
-        // Bits 0-9 are magnitude (0-1023), bit 10 is direction
-        return (static_cast<float>(load & 0x3FF) / 1023.0f) * 100.0f;
+
+        static constexpr uint16_t LOAD_MAGNITUDE_MASK = 0x3FF; // Bits 0-9
+        static constexpr float MAX_LOAD_VALUE = 1023.0f;
+
+        return (static_cast<float>(load & LOAD_MAGNITUDE_MASK) / MAX_LOAD_VALUE) * 100.0f;
     }
 
     const float SCS0009Servo::read_temperature_celsius() {
