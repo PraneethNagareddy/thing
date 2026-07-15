@@ -53,17 +53,23 @@ namespace hardware {
     }
 
     bool FeetechServoProtocol::write8(uint8_t id, uint8_t reg, uint8_t value) const {
-        std::lock_guard<std::mutex> lock(transaction_mutex_);
-        bool ok = send_packet(id, INST_WRITE, {reg, value});
+        bool ok;
+        {
+            std::lock_guard<std::mutex> lock(transaction_mutex_);
+            ok = send_packet(id, INST_WRITE, {reg, value});
+        }
         // Recovery time for the servo MCU
         std::this_thread::sleep_for(std::chrono::microseconds(500));
         return ok;
     }
 
     bool FeetechServoProtocol::write16(uint8_t id, uint8_t reg, uint16_t value) const {
-        std::lock_guard<std::mutex> lock(transaction_mutex_);
-        // Feetech uses Big-Endian (High byte first)
-        bool ok = send_packet(id, INST_WRITE, {reg, static_cast<uint8_t>(value >> 8), static_cast<uint8_t>(value & 0xFF)});
+        bool ok;
+        {
+            std::lock_guard<std::mutex> lock(transaction_mutex_);
+            // Feetech uses Big-Endian (High byte first)
+            ok = send_packet(id, INST_WRITE, {reg, static_cast<uint8_t>(value >> 8), static_cast<uint8_t>(value & 0xFF)});
+        }
         std::this_thread::sleep_for(std::chrono::microseconds(500));
         return ok;
     }
