@@ -30,9 +30,9 @@ void register_shutdown_action() {
      using namespace telemetry;
      AlertHandler::get_instance().register_action_handler(SuggestedAction::FREEZE, [](const Alert& alert) {
          if (alert.reading) {
-             IMonitorable<JointReading> *monitorable_joint = TelemetryManager<JointReading>::get_monitorable(
+             IMonitorable<JointReading> *monitorable_joint = TelemetryManager::get_monitorable(
                   alert.reading->monitorable_id);
-              if (auto joint = dynamic_cast<Joint*>(monitorable_joint)) { // Safely cast to Joint*
+              if (auto joint = dynamic_cast<articulation::Joint*>(monitorable_joint)) {
                   joint->freeze();
               }
          }
@@ -44,7 +44,7 @@ void register_shutdown_action() {
      using namespace telemetry;
      AlertHandler::get_instance().register_action_handler(SuggestedAction::UNFREEZE, [](const Alert& alert) {
          if (alert.reading) {
-             IMonitorable<JointReading> *monitorable_joint = TelemetryManager<JointReading>::get_monitorable(
+             IMonitorable<JointReading> *monitorable_joint = TelemetryManager::get_monitorable(
                   alert.reading->monitorable_id);
               if (auto joint = dynamic_cast<Joint*>(monitorable_joint)) { // Safely cast to Joint*
                   joint->unfreeze();
@@ -58,7 +58,7 @@ void register_shutdown_action() {
      using namespace telemetry;
      AlertHandler::get_instance().register_action_handler(SuggestedAction::RESET, [](const Alert& alert) {
          if (alert.reading) {
-             IMonitorable<JointReading> *monitorable_joint = TelemetryManager<JointReading>::get_monitorable(
+             IMonitorable<JointReading> *monitorable_joint = TelemetryManager::get_monitorable(
                   alert.reading->monitorable_id);
               if (auto joint = dynamic_cast<Joint*>(monitorable_joint)) { // Safely cast to Joint*
                   joint->unfreeze(); // Ensure it's not frozen so it can move
@@ -73,7 +73,7 @@ void register_shutdown_action() {
      using namespace telemetry;
      AlertHandler::get_instance().register_action_handler(SuggestedAction::THROTTLE, [](const Alert& alert) {
          if (alert.reading) {
-             IMonitorable<JointReading> *monitorable_joint = TelemetryManager<JointReading>::get_monitorable(
+             IMonitorable<JointReading> *monitorable_joint = TelemetryManager::get_monitorable(
                   alert.reading->monitorable_id);
               if (auto joint = dynamic_cast<Joint*>(monitorable_joint)) { // Safely cast to Joint*
                   joint->unfreeze(); // Ensure it's not frozen so it can move
@@ -88,7 +88,7 @@ void register_shutdown_action() {
      using namespace telemetry;
      AlertHandler::get_instance().register_action_handler(SuggestedAction::UNTHROTTLE, [](const Alert& alert) {
          if (alert.reading) {
-             IMonitorable<JointReading> *monitorable_joint = TelemetryManager<JointReading>::get_monitorable(
+             IMonitorable<JointReading> *monitorable_joint = TelemetryManager::get_monitorable(
                   alert.reading->monitorable_id);
               if (auto joint = dynamic_cast<Joint*>(monitorable_joint)) { // Safely cast to Joint*
                   joint->unfreeze(); // Ensure it's not frozen so it can move
@@ -110,7 +110,7 @@ void register_alert_actions() {
 }
 
 void initialize_telemetry() {
-    telemetry::TelemetryManager<telemetry::JointReading>::start();
+    telemetry::TelemetryManager::start();
 }
 
 void initialize_controller(std::shared_ptr<anatomy::hand::Hand> hand) {
@@ -123,6 +123,6 @@ void initialize_controller(std::shared_ptr<anatomy::hand::Hand> hand) {
 int main() {
     std::shared_ptr<anatomy::hand::Hand> hand = builder::HandBuilder::build();
     register_alert_actions();
-    //initialize_telemetry();
+    initialize_telemetry();
     initialize_controller(hand);
 }

@@ -18,21 +18,19 @@
 
 namespace telemetry {
 
-    template <typename M>
-    requires std::derived_from<M, BaseReading>
 
     class TelemetryManager {
     private:
-        static inline std::vector<telemetry::IMonitorable<M>*> monitorables_;
-        static inline std::map<uint8_t, IMonitorable<M>*> monitorable_objects_map_;
-        static inline std::unordered_map<IMonitorable<M>*, std::jthread> threads_;
+        static inline std::vector<telemetry::IMonitorable<JointReading>*> monitorables_;
+        static inline std::map<uint8_t, IMonitorable<JointReading>*> monitorable_objects_map_;
+        static inline std::unordered_map<IMonitorable<JointReading>*, std::jthread> threads_;
         static inline std::mutex registry_mutex;
         static inline bool is_running = false;
 
-        static void start_monitoring_thread(IMonitorable<M>* monitorable) {
+        static void start_monitoring_thread(IMonitorable<JointReading>* monitorable) {
             threads_[monitorable] = std::jthread([monitorable](std::stop_token stop_token) {
                 while (!stop_token.stop_requested()) {
-                    const M reading = monitorable->poll();
+                    const JointReading reading = monitorable->poll();
                     ReadingEvaluator::evaluate(reading);
                     // Use a local condition variable or simple sleep to avoid blocking
                     // the TelemetryManager's ability to register/unregister other objects.
@@ -45,7 +43,7 @@ namespace telemetry {
         }
 
     public:
-        static void register_monitorable(const uint8_t id, IMonitorable<M>* monitorable) {
+        static void register_monitorable(const uint8_t id, IMonitorable<JointReading>* monitorable) {
             if (!monitorable) return;
             // Check if a monitorable with this ID already exists
             if (monitorable_objects_map_.count(id)) {
@@ -66,7 +64,7 @@ namespace telemetry {
             }
         }
 
-        static void unregister_monitorable(IMonitorable<M>* monitorable) {
+        static void unregister_monitorable(IMonitorable<JointReading>* monitorable) {
             if (!monitorable) return;
             // Find the ID associated with the monitorable pointer
             uint8_t found_id = 0;
@@ -115,13 +113,10 @@ namespace telemetry {
             }
         }
 
-        static IMonitorable<M>* get_monitorable(const uint8_t id) {
+        static IMonitorable<JointReading>* get_monitorable(const uint8_t id) {
             return monitorable_objects_map_[id];
         }
 
-        static IMonitorable<M>* get_all_monitorables() {
-            return monitorables_;
-        }
     };
 }
 

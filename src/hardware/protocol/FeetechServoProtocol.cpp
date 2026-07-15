@@ -82,7 +82,7 @@ namespace hardware {
             res = receive_packet(id, 2);
         }
         std::this_thread::sleep_for(std::chrono::microseconds(200));
-        
+
         if (res.size() != 2) return -1;
         return static_cast<int16_t>((res[0] << 8) | res[1]);
     }
