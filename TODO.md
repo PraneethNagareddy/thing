@@ -39,6 +39,9 @@
     *   Figure out how easing can still honor the `time_ms` constraint (e.g., by normalizing elapsed time $t$ against total duration).
     *   Determine the optimal execution point for the `easing::apply` function (e.g., within a high-frequency loop in `Joint::move` or `Hand::apply`).
 
-10. **Add more gestures support and make them available in controller:**
+10. **Fix the issues with telemetry:**
+    *   Seeing thread deadlock errors when starting the code with telemetry enabled
+
+11. **Add more gestures support and make them available in controller:**
     *   Support more gestures.
     *   Expose these gestures in controller.
