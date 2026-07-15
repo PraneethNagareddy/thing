@@ -32,9 +32,9 @@ namespace gestures {
         static std::vector<Movement> thumbs_up() {
             return {
                 //FingerMovement{Fingers::INDEX, Flexion{1.0f, 200}},
-                FingerMovement{Fingers::MIDDLE, Flexion{1.0f, 1000}},
-                FingerMovement{Fingers::RING, Flexion{1.0f, 1000}},
-                FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}},
+                FingerMovement{Fingers::MIDDLE, Flexion{1.0f, 1000}, 100},
+                FingerMovement{Fingers::RING, Flexion{1.0f, 1000}, 100},
+                FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 100},
                 ThumbMovement{
                     Flexion{0.0f, 200}, // Full extend
                     Abduction{0.0f, 200}, // Full extend
