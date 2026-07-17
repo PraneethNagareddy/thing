@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <chrono>
 #include <map>
+#include <iostream>
 #include <condition_variable>
 #include "telemetry/IMonitorable.h"
 #include "telemetry/alert/ReadingEvaluator.h"
@@ -84,6 +85,18 @@ namespace telemetry {
 
             // Remove from monitorable_objects_map_
             monitorable_objects_map_.erase(found_id);
+
+            // Debugging: Identify if we are trying to join ourselves
+            auto it = threads_.find(monitorable);
+            if (it != threads_.end()) {
+                if (it->second.get_id() == std::this_thread::get_id()) {
+                    std::cerr << "[TelemetryManager] CRITICAL: Thread for ID " << (int)found_id 
+                              << " is trying to unregister itself! This causes EDEADLK." << std::endl;
+                    // If you want to see the stack trace here, you would typically 
+                    // use a backtrace library or let the debugger catch this line.
+                    it->second.detach(); // Detach instead of join to avoid the crash
+                }
+            }
 
             std::lock_guard<std::mutex> lock(registry_mutex);
 
