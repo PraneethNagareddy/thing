@@ -127,8 +127,8 @@ namespace telemetry::alert {
             if (r.load_percentage < 70.0) {
                 return Alert{
                     .reading = &r,
-                    .message = "Servo at high load: " + std::to_string(r.load_percentage),
-                    .level = SeverityLevel::HIGH,
+                    .message = "Servo at Normal load: " + std::to_string(r.load_percentage),
+                    .level = SeverityLevel::NORMAL,
                     .actions = {SuggestedAction::LOG,SuggestedAction::UNFREEZE,SuggestedAction::UNTHROTTLE}
                 };
             }

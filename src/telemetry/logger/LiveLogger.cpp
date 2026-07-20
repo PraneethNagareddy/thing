@@ -74,10 +74,10 @@ namespace telemetry::logging {
         // Type-specific extraction
         if (auto joint = dynamic_cast<const JointReading*>(&reading)) {
             type_name = "Joint";
-            ss << "Monitorable ID: " << reading.monitorable_id
+            ss << "Monitorable ID: " << reading.monitorable_id << " | "
                << "Temp: " << std::fixed << std::setprecision(1) << joint->temperature_celsius << "C | "
                << "Volt: " << joint->voltage_mv << "mV | "
-               << "Load: " << joint->load_percentage << "%"
+               << "Load: " << joint->load_percentage << "% | "
                << "Timestap: " << utility::format_time_point(reading.timestamp);
         }
         // Add else-if blocks here for other Reading types (Battery, IMU, etc.)
