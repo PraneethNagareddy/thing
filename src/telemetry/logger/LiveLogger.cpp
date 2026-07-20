@@ -6,10 +6,63 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <cstdio> // For remove()
 
 #include "utility/Utils.h"
 
 namespace telemetry::logging {
+
+    // Destructor implementation
+    LiveLogger::~LiveLogger() {
+        stop_display_thread(); // Ensure the display thread is stopped
+        if (output_stream_.is_open()) {
+            output_stream_.close();
+        }
+    }
+
+    void LiveLogger::set_output_path(const std::string& filepath) {
+        std::lock_guard<std::recursive_mutex> lock(log_mutex_);
+        if (output_stream_.is_open()) {
+            output_stream_.close();
+        }
+        output_path_ = filepath;
+        // Open the stream. For named pipes, this will block until a reader opens the other end.
+        output_stream_.open(output_path_, std::ios_base::out);
+        if (!output_stream_.is_open()) {
+            std::cerr << "LiveLogger: Failed to open output stream to " << output_path_ << std::endl;
+        } else {
+            std::cout << "LiveLogger: Output stream opened to " << output_path_ << std::endl;
+        }
+    }
+
+    void LiveLogger::start_display_thread(std::chrono::seconds interval) {
+        if (display_running_.exchange(true)) { // Set to true, if it was false, proceed
+            std::cout << "LiveLogger: Display thread already running." << std::endl;
+            return;
+        }
+
+        display_thread_ = std::jthread([this, interval](std::stop_token st) {
+            std::cout << "LiveLogger: Display thread started." << std::endl;
+            while (!st.stop_requested()) {
+                this->display(); // Call the const display method
+                std::this_thread::sleep_for(interval);
+            }
+            std::cout << "LiveLogger: Display thread stopping." << std::endl;
+        });
+    }
+
+    void LiveLogger::stop_display_thread() {
+        if (display_running_.exchange(false)) { // Set to false, if it was true, proceed
+            if (display_thread_.joinable()) {
+                display_thread_.request_stop(); // Signal the thread to stop
+                // jthread's destructor will call join(), so no explicit join() here
+                // If this is called from LiveLogger's destructor, display_thread_ will be destroyed
+                // and implicitly joined.
+            }
+            std::cout << "LiveLogger: Display thread stopped." << std::endl;
+        }
+    }
+
 
     void LiveLogger::log(const BaseReading& reading) {
         //print_stack_trace(); // Uncomment if you suspect this lock is the issue
@@ -59,38 +112,44 @@ namespace telemetry::logging {
 
     void LiveLogger::display() const {
         //print_stack_trace(); // Uncomment if you suspect this lock is the issue
-        std::lock_guard<std::recursive_mutex> lock(log_mutex_); // <--- REMOVED const_cast
+        std::lock_guard<std::recursive_mutex> lock(log_mutex_);
+
+        // Determine output stream: named pipe/file or console
+        // FIX: Explicitly cast output_stream_ to std::ostream&
+        std::ostream& os = output_stream_.is_open() ? static_cast<std::ostream&>(output_stream_) : std::cout;
 
         // Clear screen (ANSI escape code) - optional, for a true "Live" feel
-        std::cout << "\033[2J\033[1;1H";
+        // This will clear the *target* terminal, whether it's the main one or the popup.
+        os << "\033[2J\033[1;1H";
 
-        std::cout << "================== TELEMETRY DASHBOARD ==================\n";
+        os << "================== TELEMETRY DASHBOARD ==================\n";
 
         if (registry_.empty()) {
-            std::cout << "Waiting for data...\n";
+            os << "Waiting for data...\n";
         }
 
         for (const auto& [type, sensors] : registry_) {
-            std::cout << "\n[" << type << "]\n";
+            os << "\n[" << type << "]\n";
             for (const auto& [id, data] : sensors) {
-                std::cout << "  > " << std::left << std::setw(10) << id
+                os << "  > " << std::left << std::setw(10) << id
                           << " | " << data << "\n";
             }
         }
-        std::cout << "\n=========================================================\n";
+        os << "\n=========================================================\n";
 
-        std::cout << "\n--------------------- RECENT ALERTS ---------------------\n";
+        os << "\n--------------------- RECENT ALERTS ---------------------\n";
         if (recent_alerts_.empty()) {
-            std::cout << "No alerts detected.\n";
+            os << "No alerts detected.\n";
         } else {
             for (const auto& alert : recent_alerts_) {
-                std::cout << "[" << utility::format_time_point(alert.timestamp) << "] "
+                os << "[" << utility::format_time_point(alert.timestamp) << "] "
                           << severity_to_string(alert.level) << " "
-                          << "ID:" << alert.reading->monitorable_id << " - "
+                          << "ID:" << alert.reading->monitorable_id << " - " // Corrected access
                           << alert.message << "\n";
             }
         }
 
-        std::cout << "=========================================================\n";
+        os << "=========================================================\n";
+        os << std::flush; // Ensure data is written immediately
     }
 }
