@@ -17,7 +17,7 @@ namespace telemetry::alert {
                     .reading = &r,
                     .message = "Servo at critical temperature: " + std::to_string(r.temperature_celsius),
                     .level = SeverityLevel::CRITICAL,
-                    .actions = {SuggestedAction::LOG,SuggestedAction::FREEZE}
+                    .actions = {SuggestedAction::LOG,SuggestedAction::RESET}
                 };
             }
             return std::nullopt;

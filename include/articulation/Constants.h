@@ -13,10 +13,10 @@ namespace articulation::constants {
     inline constexpr float RING_FINGER_FULL_FLEX_ANGLE = 10.0f;
 
     inline constexpr float MIDDLE_FINGER_NO_FLEX_ANGLE = 270.0f;
-    inline constexpr float MIDDLE_FINGER_FULL_FLEX_ANGLE = 10.0f;
+    inline constexpr float MIDDLE_FINGER_FULL_FLEX_ANGLE = 25.0f;
 
     inline constexpr float INDEX_FINGER_NO_FLEX_ANGLE = 215.0f;
-    inline constexpr float INDEX_FINGER_FULL_FLEX_ANGLE = 5.0f;
+    inline constexpr float INDEX_FINGER_FULL_FLEX_ANGLE = 0.0f;
 
     inline constexpr float THUMB_FLEXION_NO_FLEX_ANGLE = 90.0f;
     inline constexpr float THUMB_FLEXION_FULL_FLEX_ANGLE = 9.0f;
