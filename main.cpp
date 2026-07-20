@@ -1,11 +1,36 @@
 #include <iostream>
 #include <utility>
 #include <builder/HandBuilder.h>
+#include <cstdlib> // For std::system, std::atexit, EXIT_FAILURE
+#include <string>
+#include <thread> // For std::this_thread::sleep_for
+#include <chrono> // For std::chrono::seconds
+
+// For named pipes (FIFOs)
+#include <sys/stat.h> // For mkfifo
+#include <unistd.h>   // For unlink
+#include <cerrno>     // For errno
+#include <cstring>    // For strerror
 
 #include "control/CommandLineController.h"
 #include "telemetry/TelemetryManager.h"
 #include "telemetry/alert/AlertHandler.h"
 #include "telemetry/logging/LiveLogger.h"
+
+
+// Define the named pipe path
+const std::string LIVE_LOGGER_FIFO_PATH = "/tmp/thing_telemetry_fifo";
+
+// Function to clean up the named pipe on exit
+void cleanup_fifo() {
+    std::cout << "Cleaning up named pipe: " << LIVE_LOGGER_FIFO_PATH << std::endl;
+    if (std::remove(LIVE_LOGGER_FIFO_PATH.c_str()) != 0) {
+        // Ignore ENOENT (No such file or directory) if it was already removed
+        if (errno != ENOENT) {
+            std::cerr << "Error cleaning up named pipe: " << strerror(errno) << std::endl;
+        }
+    }
+}
 
 
 void register_log_action() {
@@ -20,6 +45,8 @@ void register_shutdown_action() {
     using namespace telemetry::alert;
     using namespace telemetry;
     auto shutdown_action = [](const Alert& alert) {
+        // CRITICAL: Call TelemetryManager::stop() before exiting
+        TelemetryManager::stop();
         std::exit(EXIT_FAILURE);
     };
     AlertHandler::get_instance().register_action_handler(SuggestedAction::SHUTDOWN, shutdown_action);
@@ -75,7 +102,7 @@ void register_shutdown_action() {
          if (alert.reading) {
              IMonitorable<JointReading> *monitorable_joint = TelemetryManager::get_monitorable(
                   alert.reading->monitorable_id);
-              if (auto joint = dynamic_cast<Joint*>(monitorable_joint)) { // Safely cast to Joint*
+              if (auto joint = dynamic_cast<articulation::Joint*>(monitorable_joint)) { // Safely cast to Joint*
                   joint->unfreeze(); // Ensure it's not frozen so it can move
                   joint->throttle();
               }
@@ -111,6 +138,7 @@ void register_alert_actions() {
 
 void initialize_telemetry() {
     telemetry::TelemetryManager::start();
+    // telemetry::logging::LiveLogger::get_instance().display(); // No longer display to main console
 }
 
 void initialize_controller(std::shared_ptr<anatomy::hand::Hand> hand) {
@@ -121,8 +149,36 @@ void initialize_controller(std::shared_ptr<anatomy::hand::Hand> hand) {
 }
 
 int main() {
+    // 1. Create the named pipe (FIFO)
+    // Remove it first if it already exists from a previous run
+    std::remove(LIVE_LOGGER_FIFO_PATH.c_str());
+    if (mkfifo(LIVE_LOGGER_FIFO_PATH.c_str(), 0666) == -1) {
+        if (errno != EEXIST) { // EEXIST means it already exists, which is fine if we didn't remove it
+            std::cerr << "Error creating named pipe: " << strerror(errno) << std::endl;
+            return 1;
+        }
+    }
+    std::atexit(cleanup_fifo); // Register cleanup function
+
+    // 2. Launch a new terminal window to 'cat' the named pipe
+    // This command is specific to macOS Terminal.app
+    std::string terminal_command = "osascript -e 'tell application \"Terminal\" to do script \"cat " + LIVE_LOGGER_FIFO_PATH + "; exit\"' > /dev/null 2>&1";
+    std::system(terminal_command.c_str());
+    std::this_thread::sleep_for(std::chrono::seconds(1)); // Give terminal time to open and cat
+
+    // 3. Set LiveLogger to output to the named pipe
+    telemetry::logging::LiveLogger::get_instance().set_output_path(LIVE_LOGGER_FIFO_PATH);
+    // NEW: Start the LiveLogger display thread
+    telemetry::logging::LiveLogger::get_instance().start_display_thread(std::chrono::seconds(1)); // Refresh every 1 second
+
+
     std::shared_ptr<anatomy::hand::Hand> hand = builder::HandBuilder::build();
     register_alert_actions();
-    //initialize_telemetry();
+    initialize_telemetry();
     initialize_controller(hand);
+
+    // CRITICAL: Explicitly stop the TelemetryManager before main exits
+    telemetry::TelemetryManager::stop();
+
+    return 0;
 }

@@ -39,9 +39,12 @@
     *   Figure out how easing can still honor the `time_ms` constraint (e.g., by normalizing elapsed time $t$ against total duration).
     *   Determine the optimal execution point for the `easing::apply` function (e.g., within a high-frequency loop in `Joint::move` or `Hand::apply`).
 
-10. **Fix the issues with telemetry:**
+10. **Fix the issues with telemetry (DONE):**
     *   Seeing thread deadlock errors when starting the code with telemetry enabled
 
 11. **Add more gestures support and make them available in controller:**
     *   Support more gestures.
     *   Expose these gestures in controller.
+
+12. **Minor Code Cleanup:**
+    *   Move the terminal related code from main.cpp and LiveLogger.cpp to a dedicated Interface class and add support for windows as well 
