@@ -20,6 +20,8 @@ void register_shutdown_action() {
     using namespace telemetry::alert;
     using namespace telemetry;
     auto shutdown_action = [](const Alert& alert) {
+        // CRITICAL: Call TelemetryManager::stop() before exiting
+        TelemetryManager::stop();
         std::exit(EXIT_FAILURE);
     };
     AlertHandler::get_instance().register_action_handler(SuggestedAction::SHUTDOWN, shutdown_action);
@@ -111,6 +113,7 @@ void register_alert_actions() {
 
 void initialize_telemetry() {
     telemetry::TelemetryManager::start();
+    telemetry::logging::LiveLogger::get_instance().display();
 }
 
 void initialize_controller(std::shared_ptr<anatomy::hand::Hand> hand) {
@@ -123,6 +126,11 @@ void initialize_controller(std::shared_ptr<anatomy::hand::Hand> hand) {
 int main() {
     std::shared_ptr<anatomy::hand::Hand> hand = builder::HandBuilder::build();
     register_alert_actions();
-    //initialize_telemetry();
+    initialize_telemetry();
     initialize_controller(hand);
+
+    // CRITICAL: Explicitly stop the TelemetryManager before main exits
+    //telemetry::TelemetryManager::stop();
+
+    return 0;
 }

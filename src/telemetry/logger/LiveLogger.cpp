@@ -12,7 +12,8 @@
 namespace telemetry::logging {
 
     void LiveLogger::log(const BaseReading& reading) {
-        std::lock_guard<std::mutex> lock(log_mutex_);
+        //print_stack_trace(); // Uncomment if you suspect this lock is the issue
+        std::lock_guard<std::recursive_mutex> lock(log_mutex_);
 
         std::string type_name = "Unknown";
         std::stringstream ss;
@@ -35,7 +36,8 @@ namespace telemetry::logging {
     }
 
     void LiveLogger::log(const alert::Alert& alert) {
-        std::lock_guard<std::mutex> lock(log_mutex_);
+        //print_stack_trace(); // Uncomment if you suspect this lock is the issue
+        std::lock_guard<std::recursive_mutex> lock(log_mutex_);
 
         recent_alerts_.insert(recent_alerts_.begin(), alert);
 
@@ -56,10 +58,8 @@ namespace telemetry::logging {
 
 
     void LiveLogger::display() const {
-        // Using a try_lock or scoped lock if you call this from a high-frequency loop
-        // to avoid blocking the telemetry threads too long.
-        static std::mutex display_mutex;
-        std::lock_guard<std::mutex> lock(const_cast<std::mutex&>(log_mutex_));
+        //print_stack_trace(); // Uncomment if you suspect this lock is the issue
+        std::lock_guard<std::recursive_mutex> lock(log_mutex_); // <--- REMOVED const_cast
 
         // Clear screen (ANSI escape code) - optional, for a true "Live" feel
         std::cout << "\033[2J\033[1;1H";

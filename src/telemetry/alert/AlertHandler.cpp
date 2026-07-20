@@ -3,7 +3,6 @@
 //
 
 #include "telemetry/alert/AlertHandler.h"
-#include "telemetry/logging/LiveLogger.h"
 #include <iostream>
 
 namespace telemetry::alert {
