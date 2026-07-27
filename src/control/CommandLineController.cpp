@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <iomanip>
+#include <vector>
 
 namespace control {
 
@@ -16,6 +17,7 @@ namespace control {
         std::cout << "  thumbsup - Execute Thumbs Up" << std::endl;
         std::cout << "  reset    - Reset all servos to default" << std::endl;
         std::cout << "  stats <id>    - Get real-time servo telemetry" << std::endl;
+        std::cout << "  set <id> <angle> - Set individual servo angle (0-300 degrees)" << std::endl;
         std::cout << "  exit     - Stop the controller" << std::endl;
         std::cout << ">> ";
     }
@@ -33,29 +35,30 @@ namespace control {
             print_help();
             if (!std::getline(std::cin, input)) break;
 
-            // Normalize input to lowercase
-            std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+            // Normalize input to lowercase for command comparison, but keep original for parsing
+            std::string lower_input = input;
+            std::transform(lower_input.begin(), lower_input.end(), lower_input.begin(), ::tolower);
 
-            if (input == "exit" || input == "quit") {
+            if (lower_input == "exit" || lower_input == "quit") {
                 running_ = false;
                 std::cout << "Shutting down controller..." << std::endl;
             } 
-            else if (input == "pinch") {
+            else if (lower_input == "pinch") {
                 std::cout << "Executing Pinky Pinch..." << std::endl;
                 auto movements = gestures::Gestures::pinky_pinch();
                 hand_->apply(movements);
             } 
-            else if (input == "thumbsup") {
+            else if (lower_input == "thumbsup") {
                 std::cout << "Executing Thumbs Up..." << std::endl;
                 auto movements = gestures::Gestures::thumbs_up();
                 hand_->apply(movements);
             }
-            else if (input == "reset") {
+            else if (lower_input == "reset") {
                 std::cout << "Resetting all servos to default positions..." << std::endl;
                 auto movements = gestures::Gestures::reset_all();
                 hand_->apply(movements);
             }
-            else if (input.find("stats") == 0) {
+            else if (lower_input.find("stats") == 0) {
                 std::stringstream ss(input);
                 std::string cmd;
                 int id;
@@ -80,6 +83,32 @@ namespace control {
                 }
                 else {
                     std::cout << "Error: No joint found with Servo ID " << id << std::endl;
+                }
+            }
+            else if (lower_input.find("set") == 0) {
+                std::stringstream ss(input);
+                std::string cmd;
+                int id;
+                float angle_degrees; // Use float for angle to allow decimal input
+
+                if (!(ss >> cmd >> id >> angle_degrees)) {
+                    std::cout << "Usage: set <servoID> <angle>" << std::endl;
+                    continue;
+                }
+
+                if (hardware::constants::DEFAULT_SCS0009_PROTOCOL) {
+                    using hardware::constants::DEFAULT_SCS0009_PROTOCOL;
+                    // Convert angle from degrees (0-300) to steps (0-1023)
+                    uint16_t steps = static_cast<uint16_t>((angle_degrees / 300.0f) * 1023.0f);
+
+                    std::cout << "Setting servo " << id << " to angle " << angle_degrees << " degrees (" << steps << " steps)..." << std::endl;
+                    if (DEFAULT_SCS0009_PROTOCOL->move_steps(id, steps)) {
+                        std::cout << "Servo " << id << " moved successfully." << std::endl;
+                    } else {
+                        std::cout << "Failed to move servo " << id << "." << std::endl;
+                    }
+                } else {
+                    std::cout << "Error: SCS0009Protocol not initialized." << std::endl;
                 }
             }
             else {

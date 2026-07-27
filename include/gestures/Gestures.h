@@ -19,10 +19,16 @@ namespace gestures {
          */
         static std::vector<Movement> pinky_pinch() {
             return {
-                FingerMovement{Fingers::PINKY, Flexion{0.0f, 1000}, 100},
-                FingerMovement{Fingers::INDEX, Flexion{0.0f, 1000}, 300},
-                FingerMovement{Fingers::MIDDLE, Flexion{0.0f, 1000}, 500},
-                FingerMovement{Fingers::RING, Flexion{0.0f, 1000}, 2000}
+                /*FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 100},
+                FingerMovement{Fingers::INDEX, Flexion{1.0f, 1000}, 300},
+                FingerMovement{Fingers::MIDDLE, Flexion{1.0f, 1000}, 500},
+                FingerMovement{Fingers::RING, Flexion{1.0f, 1000}, 2000}*/
+                FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 100},
+                ThumbMovement{
+                    Flexion{0.0f, 200}, // Full extend
+                    Abduction{0.5f, 200}, // Full extend
+                    Opposition{0.0f, 200}, // Full repose
+                }
             };
         }
 
@@ -31,15 +37,15 @@ namespace gestures {
          */
         static std::vector<Movement> thumbs_up() {
             return {
-                FingerMovement{Fingers::INDEX, Flexion{1.0f, 1000}, 100},
-                FingerMovement{Fingers::MIDDLE, Flexion{1.0f, 1000}, 100},
-                FingerMovement{Fingers::RING, Flexion{1.0f, 1000}, 100},
-                FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 100},
-                /*ThumbMovement{
+                FingerMovement{Fingers::INDEX, Extension{1.0f, 1000}, 100},
+                FingerMovement{Fingers::MIDDLE, Extension{1.0f, 1000}, 100},
+                FingerMovement{Fingers::RING, Extension{1.0f, 1000}, 100},
+                FingerMovement{Fingers::PINKY, Extension{1.0f, 1000}, 100},
+                ThumbMovement{
                     Flexion{0.0f, 200}, // Full extend
                     Abduction{0.0f, 200}, // Full extend
-                    Opposition{0.0f, 200}, // Full repose
-                }*/
+                    Opposition{1.0f, 200}, // Full repose
+                }
             };
         }
 
