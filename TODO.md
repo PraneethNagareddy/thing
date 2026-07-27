@@ -48,3 +48,8 @@
 
 12. **Minor Code Cleanup:**
     *   Move the terminal related code from main.cpp and LiveLogger.cpp to a dedicated Interface class and add support for windows as well 
+
+13. **Bugs:**
+    * The start_spread_delay_ms and start_oppose_delay_ms in ThumbMovement is not honored 
+    * Currently Finger's Flexion and Extension always uses 1.0-<value> for flexion. See if this is correct and see the behavior needed for Thumb's Spread and Oppose.
+    * Make the Gesture methods also take a factor so that the controller can decide what percent of the gesture to make.

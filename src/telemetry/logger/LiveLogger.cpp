@@ -79,7 +79,8 @@ namespace telemetry::logging {
                << "Volt: " << joint->voltage_mv << "mV | "
                << "Load: " << joint->load_percentage << "% | "
                << "Angle: " << joint->current_angle_degrees << " °|"
-               << "Timestap: " << utility::format_time_point(reading.timestamp);
+               << "Speed:" << joint->current_speed_steps_per_second << "sps |"
+               << "Timestamp: " << utility::format_time_point(reading.timestamp);
         }
         // Add else-if blocks here for other Reading types (Battery, IMU, etc.)
         else {

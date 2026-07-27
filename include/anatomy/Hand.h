@@ -34,14 +34,20 @@ namespace anatomy::hand {
             std::variant<Adduction, Abduction> spread_value,
             std::variant<Opposition, Reposition> oppose_value,
             float start_delay_ms = 0.0f,
+            float start_spread_delay_ms = 0.0f,
+            float start_oppose_delay_ms = 0.0f,
             Easing easing = Easing::LINEAR) :
                     FingerMovement(Fingers::THUMB, flex_value, start_delay_ms, easing),
                     spread_value(spread_value),
-                    oppose_value(oppose_value) {
+                    oppose_value(oppose_value),
+                    start_spread_delay_ms(start_spread_delay_ms),
+                    start_oppose_delay_ms(start_oppose_delay_ms){
         }
 
         std::variant<Adduction, Abduction>  spread_value;
         std::variant<Opposition, Reposition> oppose_value;
+        float start_spread_delay_ms = 0.0f;
+        float start_oppose_delay_ms = 0.0f;
     };
 
     enum class Side {

@@ -19,15 +19,18 @@ namespace gestures {
          */
         static std::vector<Movement> pinky_pinch() {
             return {
-                /*FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 100},
+                /*FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 100},*/
                 FingerMovement{Fingers::INDEX, Flexion{1.0f, 1000}, 300},
                 FingerMovement{Fingers::MIDDLE, Flexion{1.0f, 1000}, 500},
-                FingerMovement{Fingers::RING, Flexion{1.0f, 1000}, 2000}*/
+                FingerMovement{Fingers::RING, Flexion{1.0f, 1000}, 2000},
                 FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 100},
                 ThumbMovement{
-                    Flexion{0.0f, 200}, // Full extend
-                    Abduction{0.5f, 200}, // Full extend
-                    Opposition{0.0f, 200}, // Full repose
+                    Flexion{0.0f, 1000}, // Full extend
+                    Abduction{1.0f, 1000}, // Full extend
+                    Opposition{0.0f, 1000},// Full repose
+                    200,
+                    300,
+                    400
                 }
             };
         }
@@ -42,9 +45,12 @@ namespace gestures {
                 FingerMovement{Fingers::RING, Extension{1.0f, 1000}, 100},
                 FingerMovement{Fingers::PINKY, Extension{1.0f, 1000}, 100},
                 ThumbMovement{
-                    Flexion{0.0f, 200}, // Full extend
-                    Abduction{0.0f, 200}, // Full extend
-                    Opposition{1.0f, 200}, // Full repose
+                    Flexion{0.0f, 1000}, // Full extend
+                    Abduction{0.0f, 1000}, // Full extend
+                    Opposition{1.0f, 1000}, // Full repose
+                    200,
+                    300,
+                    400
                 }
             };
         }
