@@ -15,7 +15,10 @@ namespace articulation {
             throw std::out_of_range("Movement percentage must be between 0.0f and 1.0f");
         }
         float target_angle = no_flex_angle_ + ((full_flex_angle_ - no_flex_angle_) * movement_percent);
-        target_angle = std::clamp(target_angle, no_flex_angle_, full_flex_angle_);
+        if (no_flex_angle_ < full_flex_angle_)
+            target_angle = std::clamp(target_angle, no_flex_angle_, full_flex_angle_);
+        else
+            target_angle = std::clamp(target_angle, full_flex_angle_, no_flex_angle_);
         const int target_step = servo_->deg_to_steps(target_angle);
         const int current_step =  servo_->read_current_step();
         const float target_speed = static_cast<float>(abs(target_step - current_step)) / (static_cast<float>(time_to_execute_ms)/1000.0f);
