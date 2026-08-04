@@ -41,7 +41,7 @@ namespace gestures {
                 FingerMovement{Fingers::INDEX, Extension{1.0f, 1000}, 300},
                 FingerMovement{Fingers::MIDDLE, Extension{1.0f, 1000}, 500},
                 FingerMovement{Fingers::PINKY, Extension{1.0f, 1000}, 500},
-                FingerMovement{Fingers::RING, Flexion{0.75f, 1000}, 100},
+                FingerMovement{Fingers::RING, Flexion{0.8f, 1000}, 100},
                 ThumbMovement{
                     Flexion{0.8f, 1000}, // Full extend
                     Abduction{0.4f, 1000}, // Full extend
@@ -59,11 +59,11 @@ namespace gestures {
                 FingerMovement{Fingers::INDEX, Extension{1.0f, 1000}, 300},
                 FingerMovement{Fingers::RING, Extension{1.0f, 1000}, 500},
                 FingerMovement{Fingers::PINKY, Extension{1.0f, 1000}, 500},
-                FingerMovement{Fingers::MIDDLE, Flexion{0.75f, 1000}, 100},
+                FingerMovement{Fingers::MIDDLE, Flexion{0.8f, 1000}, 100},
                 ThumbMovement{
-                    Flexion{0.8f, 1000}, // Full extend
-                    Abduction{0.4f, 1000}, // Full extend
-                    Opposition{0.8f, 1000},// Full Oppose
+                    Flexion{0.63f, 1000}, // Full extend
+                    Abduction{0.47f, 1000}, // Full extend
+                    Opposition{1.0f, 1000},// Full Oppose
                     200,
                     300,
                     400
@@ -77,11 +77,11 @@ namespace gestures {
                 FingerMovement{Fingers::MIDDLE, Extension{1.0f, 1000}, 300},
                 FingerMovement{Fingers::RING, Extension{1.0f, 1000}, 500},
                 FingerMovement{Fingers::PINKY, Extension{1.0f, 1000}, 500},
-                FingerMovement{Fingers::INDEX, Flexion{0.9f, 1000}, 100},
+                FingerMovement{Fingers::INDEX, Flexion{0.865f, 1000}, 100},
                 ThumbMovement{
-                    Flexion{0.7f, 1000}, // Full extend
-                    Abduction{0.6f, 1000}, // Full extend
-                    Opposition{0.75f, 1000},// Full Oppose
+                    Flexion{0.63f, 1000}, // Full extend
+                    Abduction{0.53f, 1000}, // Full extend
+                    Opposition{0.8f, 1000},// Full Oppose
                     200,
                     300,
                     400
