@@ -10,7 +10,7 @@
 using namespace anatomy::hand;
 namespace gestures {
 
-    using Movement = std::variant<FingerMovement, ThumbMovement>;
+    using Movement = std::variant<FingerMovement, ThumbMovement, WristMovement>;
 
     class Gestures {
     public:

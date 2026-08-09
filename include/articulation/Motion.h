@@ -71,6 +71,12 @@ namespace articulation {
         struct Reposition : MovementValue {
             explicit Reposition(float percentage, int time_ms) : MovementValue(percentage, time_ms) {}
         };
+        struct Pitch : MovementValue {
+            explicit Pitch(float percentage, int time_ms) : MovementValue(percentage, time_ms) {}
+        };
+        struct Yaw : MovementValue {
+            explicit Yaw(float percentage, int time_ms) : MovementValue(percentage, time_ms) {}
+        };
     }
 
     class IFlexible {
@@ -92,6 +98,18 @@ namespace articulation {
         virtual ~IOpposable() = default;
         [[nodiscard]] virtual movement::Status oppose(movement::Opposition opposition) = 0;
         [[nodiscard]] virtual movement::Status repose(movement::Reposition reposition) = 0;
+    };
+
+    class IPitchable {
+    public:
+        virtual ~IPitchable() = default;
+        [[nodiscard]] virtual movement::Status pitch(movement::Pitch pitch) = 0;
+    };
+
+    class IYawable {
+    public:
+        virtual ~IYawable() = default;
+        [[nodiscard]] virtual movement::Status yaw(movement::Yaw yaw) = 0;
     };
 }
 

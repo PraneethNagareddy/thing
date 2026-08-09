@@ -51,6 +51,26 @@ namespace anatomy::hand {
           }, movement.oppose_value);
      }
 
+     void Hand::execute_pitch(Wrist &wrist, WristMovement movement) {
+          std::visit( [&wrist](auto&& arg) {
+               using T = std::decay_t<decltype(arg)>;
+               if constexpr (std::is_same_v<T, Pitch>) {
+                    const Status status = wrist.pitch(arg);
+                    std::cout<< "wrist pitch movement status:" << status << std::endl;
+               }
+          }, movement.pitch_value);
+     }
+
+     void Hand::execute_yaw(Wrist &wrist, WristMovement movement) {
+          std::visit( [&wrist](auto&& arg) {
+               using T = std::decay_t<decltype(arg)>;
+               if constexpr (std::is_same_v<T, Yaw>) {
+                    const Status status = wrist.yaw(arg);
+                    std::cout<< "wrist yaw movement status:" << status << std::endl;
+               }
+          }, movement.yaw_value);
+     }
+
 
      void Hand::apply_finger_movement_(FingerMovement &movement) {
           if (movement.finger == Fingers::THUMB) {
@@ -81,18 +101,30 @@ namespace anatomy::hand {
           }
      }
 
-     void Hand::apply_single_movement_(std::variant<FingerMovement,ThumbMovement> movement) {
+     void Hand::apply_wrist_movement_(WristMovement &movement) {
+          if (movement.start_delay_ms > 0.0f) {
+               std::this_thread::sleep_for(std::chrono::duration<float, std::milli>(movement.start_delay_ms));
+          }
+          if (Wrist* wrist = get_wrist_()) {
+               execute_pitch(*wrist, movement);
+               execute_yaw(*wrist, movement);
+          }
+     }
+
+     void Hand::apply_single_movement_(std::variant<FingerMovement, ThumbMovement, WristMovement> movement) {
           std::visit([this](auto&& arg) {
                using T = std::decay_t<decltype(arg)>;
                if constexpr (std::is_same_v<T, FingerMovement>) {
                     apply_finger_movement_(arg);
                } else if constexpr (std::is_same_v<T, ThumbMovement>) {
                     apply_thumb_movement_(arg);
+               } else if constexpr (std::is_same_v<T, WristMovement>) {
+                    apply_wrist_movement_(arg);
                }
           }, movement);
      }
 
-     void Hand::apply(std::span<std::variant<FingerMovement,ThumbMovement>> movements) {
+     void Hand::apply(std::span<std::variant<FingerMovement, ThumbMovement, WristMovement>> movements) {
           if (movements.empty()) {
                return;
           }

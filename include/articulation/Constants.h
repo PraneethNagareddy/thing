@@ -27,5 +27,11 @@ namespace articulation::constants {
     inline constexpr float THUMB_OPPOSITION_NO_FLEX_ANGLE = 258.0f;
     inline constexpr float THUMB_OPPOSITION_FULL_FLEX_ANGLE = 181.0f;
 
+    inline constexpr float WRIST_PITCH_NO_FLEX_ANGLE = 180.0f;
+    inline constexpr float WRIST_PITCH_FULL_FLEX_ANGLE = 0.0f;
+
+    inline constexpr float WRIST_YAW_NO_FLEX_ANGLE = 180.0f;
+    inline constexpr float WRIST_YAW_FULL_FLEX_ANGLE = 360.0f;
+
 }
 #endif //THING_CONSTANTS_H

@@ -8,6 +8,7 @@
 #include "anatomy/Hand.h"
 #include "anatomy/Finger.h"
 #include "anatomy/Thumb.h"
+#include "anatomy/Wrist.h"
 
 namespace builder {
 
@@ -30,11 +31,16 @@ namespace builder {
         static std::shared_ptr<articulation::Joint> create_monitored_joint(
             const std::string& name, uint8_t id, float no_flex_angle, float full_flex_angle, float default_angle);
 
+        static std::shared_ptr<articulation::Joint> create_monitored_sts3215_joint(
+            const std::string& name, uint8_t id, float no_flex_angle, float full_flex_angle, float default_angle);
+
         // Finger specific construction helpers
         static std::shared_ptr<anatomy::hand::Finger> build_standard_finger(
             const anatomy::hand::Fingers finger, uint8_t id, float no_flex_angle, float full_flex_angle);
 
         static std::shared_ptr<anatomy::hand::Thumb> build_thumb();
+
+        static std::shared_ptr<anatomy::hand::Wrist> build_wrist();
     };
 
 }
