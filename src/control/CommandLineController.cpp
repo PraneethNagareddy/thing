@@ -18,6 +18,7 @@ namespace control {
         std::cout << "  pinch2    - Execute Ring Pinch" << std::endl;
         std::cout << "  pinch3    - Execute Middle Pinch" << std::endl;
         std::cout << "  pinch4    - Execute Index Pinch" << std::endl;
+        std::cout << "  grab <mm> - Grab object of specified size in mm" << std::endl;
         std::cout << "  f2        - 2 finger Salue" << std::endl;
         std::cout << "  rock      - Rock On" << std::endl;
         std::cout << "  gun       - Finger Gun" << std::endl;
@@ -70,6 +71,18 @@ namespace control {
                 std::cout << "Executing Index Pinch..." << std::endl;
                 auto movements = gestures::Gestures::index_pinch();
                 hand_->apply(movements);
+            }
+            else if (lower_input.find("grab") == 0) {
+                std::stringstream ss(input);
+                std::string cmd;
+                float size_mm;
+                if (ss >> cmd >> size_mm) {
+                    std::cout << "Executing Grab Object for size " << size_mm << " mm..." << std::endl;
+                    auto movements = gestures::Gestures::grab_object(size_mm);
+                    hand_->apply(movements);
+                } else {
+                    std::cout << "Usage: grab <size_mm>" << std::endl;
+                }
             }
             else if (lower_input == "peace") {
                 std::cout << "Executing peace sign..." << std::endl;
