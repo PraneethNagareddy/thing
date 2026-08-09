@@ -89,6 +89,63 @@ namespace gestures {
             };
         }
 
+        /**
+         * Grab Object: Pinch-grabs an object of specified size (in mm).
+         * Calculates index finger and thumb joint positions so that the pinch leaves a gap
+         * matching the object size (with a slight grip margin to securely hold the object).
+         *
+         * @param size_mm Target object size/width in millimeters.
+         * @param grip_margin_mm Margin subtracted from size_mm for firm grip contact (default: 2.0mm).
+         * @param time_ms Movement execution time in milliseconds (default: 1000ms).
+         * @return Vector of Movements for pinching an object of the specified size.
+         */
+        static std::vector<Movement> grab_object(const float size_mm, const float grip_margin_mm = 2.0f, const int time_ms = 1000) {
+            constexpr float MIN_SIZE_MM = 0.0f;
+            constexpr float MAX_SIZE_MM = 60.0f; // Maximum pinch aperture in mm
+
+            // Baseline values at 0mm object size (0mm pinch gap)
+            constexpr float INDEX_FLEX_0MM = 0.865f;
+            constexpr float THUMB_FLEX_0MM = 0.630f;
+            constexpr float THUMB_ABD_0MM  = 0.530f;
+            constexpr float THUMB_OPP_0MM  = 0.800f;
+
+            // Target values at max object size (MAX_SIZE_MM opening)
+            constexpr float INDEX_FLEX_MAX = 0.200f;
+            constexpr float THUMB_FLEX_MAX = 0.150f;
+            constexpr float THUMB_ABD_MAX  = 0.250f;
+            constexpr float THUMB_OPP_MAX  = 0.500f;
+
+            // Apply grip margin so the hand grips the object slightly tighter than its exact size (unless size is 0mm)
+            float effective_gap_mm = size_mm > 0.0f ? std::max(0.0f, size_mm - grip_margin_mm) : 0.0f;
+
+            // Clamp effective gap between MIN_SIZE_MM and MAX_SIZE_MM
+            effective_gap_mm = std::clamp(effective_gap_mm, MIN_SIZE_MM, MAX_SIZE_MM);
+
+            // Calculate interpolation factor t in [0.0, 1.0]
+            float t = (effective_gap_mm - MIN_SIZE_MM) / (MAX_SIZE_MM - MIN_SIZE_MM);
+
+            // Interpolate finger and thumb flexion/position parameters
+            float index_flex  = INDEX_FLEX_0MM + t * (INDEX_FLEX_MAX - INDEX_FLEX_0MM);
+            float thumb_flex  = THUMB_FLEX_0MM + t * (THUMB_FLEX_MAX - THUMB_FLEX_0MM);
+            float thumb_abd   = THUMB_ABD_0MM  + t * (THUMB_ABD_MAX  - THUMB_ABD_0MM);
+            float thumb_opp   = THUMB_OPP_0MM  + t * (THUMB_OPP_MAX  - THUMB_OPP_0MM);
+
+            return {
+                FingerMovement{Fingers::MIDDLE, Extension{1.0f, time_ms}, 300},
+                FingerMovement{Fingers::RING, Extension{1.0f, time_ms}, 500},
+                FingerMovement{Fingers::PINKY, Extension{1.0f, time_ms}, 500},
+                FingerMovement{Fingers::INDEX, Flexion{index_flex, time_ms}, 100},
+                ThumbMovement{
+                    Flexion{thumb_flex, time_ms},
+                    Abduction{thumb_abd, time_ms},
+                    Opposition{thumb_opp, time_ms},
+                    200,
+                    300,
+                    400
+                }
+            };
+        }
+
         static std::vector<Movement> finger_gun() {
             return {
                 /*FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 100},*/
