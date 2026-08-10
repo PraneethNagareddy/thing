@@ -22,8 +22,10 @@ namespace control {
         std::cout << "  f2        - 2 finger Salue" << std::endl;
         std::cout << "  rock      - Rock On" << std::endl;
         std::cout << "  gun       - Finger Gun" << std::endl;
-        std::cout << "  thumbsup - Execute Thumbs Up" << std::endl;
-        std::cout << "  reset    - Reset all servos to default" << std::endl;
+        std::cout << "  thumbsup  - Execute Thumbs Up" << std::endl;
+        std::cout << "  reset     - Reset all servos to default" << std::endl;
+        std::cout << "  web_shoot - Shoot Web" << std::endl;
+        std::cout << "  rotate    - Rotate fist" << std::endl;
         std::cout << "  show_off    - Show Off All gestures" << std::endl;
         std::cout << "  wrist <pitch_pct> <yaw_pct> - Move wrist pitch & yaw (0.0 to 1.0)" << std::endl;
         std::cout << "  pitch <pct> - Move wrist pitch (0.0 to 1.0)" << std::endl;
@@ -157,6 +159,16 @@ namespace control {
             else if (lower_input == "reset") {
                 std::cout << "Resetting all servos to default positions..." << std::endl;
                 auto movements = gestures::Gestures::reset_all();
+                hand_->apply(movements);
+            }
+            else if (lower_input == "web_shoot") {
+                std::cout << "Shooting web..." << std::endl;
+                auto movements = gestures::Gestures::spidey_web();
+                hand_->apply(movements);
+            }
+            else if (lower_input == "rotate") {
+                std::cout << "Rotating fist" << std::endl;
+                auto movements = gestures::Gestures::fist_rotate();
                 hand_->apply(movements);
             }
             else if (lower_input == "show_off") {
