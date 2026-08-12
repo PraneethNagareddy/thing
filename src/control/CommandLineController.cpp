@@ -26,6 +26,7 @@ namespace control {
         std::cout << "  reset     - Reset all servos to default" << std::endl;
         std::cout << "  web_shoot - Shoot Web" << std::endl;
         std::cout << "  rotate    - Rotate fist" << std::endl;
+        std::cout << "  stream_rotate - Execute wrist rotation using movement stream" << std::endl;
         std::cout << "  show_off    - Show Off All gestures" << std::endl;
         std::cout << "  wrist <pitch_pct> <yaw_pct> - Move wrist pitch & yaw (0.0 to 1.0)" << std::endl;
         std::cout << "  pitch <pct> - Move wrist pitch (0.0 to 1.0)" << std::endl;
@@ -170,6 +171,11 @@ namespace control {
                 std::cout << "Rotating fist" << std::endl;
                 auto movements = gestures::Gestures::fist_rotate();
                 hand_->apply(movements);
+            }
+            else if (lower_input == "stream_rotate") {
+                std::cout << "Streaming continuous wrist rotation..." << std::endl;
+                auto stream = gestures::Gestures::rotate_wrist_stream();
+                hand_->apply_stream(stream);
             }
             else if (lower_input == "show_off") {
                 std::cout << "Showing Off..." << std::endl;

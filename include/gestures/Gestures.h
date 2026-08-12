@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <variant>
+#include <cmath>
 #include "anatomy/Finger.h"
 #include "articulation/Motion.h"
 #include "anatomy/Hand.h"
@@ -316,6 +317,58 @@ namespace gestures {
                     3000
                 }
             };
+        }
+
+        /**
+         * Streams a continuous rotation of the wrist in 2DOF space (Pitch and Yaw)
+         * over 360 degrees, completing a full circle.
+         */
+        static anatomy::hand::MovementStream rotate_wrist_stream() {
+            using namespace anatomy::hand;
+            using namespace articulation::movement;
+            
+            anatomy::hand::MovementStream stream;
+
+            std::vector<MovementVariant> fistGroup = {
+                FingerMovement{Fingers::MIDDLE, Flexion{1.0f, 1000}, 100},
+                FingerMovement{Fingers::RING, Flexion{1.0f, 1000}, 100},
+                FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 500},
+                FingerMovement{Fingers::INDEX, Flexion{1.0f, 1000}, 100},
+                ThumbMovement{
+                    Extension{0.2f, 1000}, // Full extend
+                    Abduction{0.2f, 1000}, // Full extend
+                    Opposition{1.0f, 1000}, // Full repose
+                    200,
+                    300,
+                    400
+                }
+            };
+
+            stream.push_back(fistGroup);
+            
+            // 36 steps of 10 degrees each to make a full 360 circle
+            const int num_steps = 36;
+            const int time_per_step_ms = 10; // fast fluid motion
+
+            for (int i = 0; i <= num_steps; ++i) {
+                float angle_rad = (static_cast<float>(i) / num_steps) * 2.0f * M_PI;
+                
+                // sin and cos give -1.0 to 1.0, map to 0.0 to 1.0 range
+                float pitch_pct = (std::sin(angle_rad) + 1.0f) / 2.0f;
+                float yaw_pct   = (std::cos(angle_rad) + 1.0f) / 2.0f;
+
+                std::vector<MovementVariant> group = {
+                    WristMovement{
+                        Pitch{pitch_pct, time_per_step_ms},
+                        Yaw{yaw_pct, time_per_step_ms},
+                        0 // no delay
+                    }
+                };
+                
+                stream.push_back(group);
+            }
+            
+            return stream;
         }
     };
 }

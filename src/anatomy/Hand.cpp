@@ -136,4 +136,10 @@ namespace anatomy::hand {
           std::cout << "All individual movement threads have completed their tasks." << std::endl;
      }
 
+     void Hand::apply_stream(const MovementStream& stream) {
+          for (auto group : stream) {
+               apply(group);
+          }
+     }
+
 }

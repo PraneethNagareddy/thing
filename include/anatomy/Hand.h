@@ -14,6 +14,10 @@
 
 namespace anatomy::hand {
 
+    using MovementVariant = std::variant<struct FingerMovement, struct ThumbMovement, struct WristMovement>;
+    using MovementGroup = std::vector<MovementVariant>;
+    using MovementStream = std::vector<MovementGroup>;
+
     enum class Easing {
         LINEAR,
         SINE,
@@ -134,6 +138,7 @@ namespace anatomy::hand {
         wrist_(std::move(wrist)) {}
         ~Hand() = default;
         void apply(std::span<std::variant<FingerMovement, ThumbMovement, WristMovement>> movements);
+        void apply_stream(const MovementStream& stream);
     };
 }
 
