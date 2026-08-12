@@ -117,8 +117,13 @@ namespace hardware {
             0x00, 0x00,                                                                      // goal time = 0 LE
             static_cast<uint8_t>(speed & 0xFF), static_cast<uint8_t>((speed >> 8) & 0xFF)  // goal speed LE
         };
-        std::lock_guard<std::mutex> lock(*bus_mutex_);
-        return send_packet(id, INST_WRITE, params);
+        bool ok;
+        {
+            std::lock_guard<std::mutex> lock(*bus_mutex_);
+            ok = send_packet(id, INST_WRITE, params);
+        }
+        std::this_thread::sleep_for(std::chrono::microseconds(200));
+        return ok;
     }
 
 } // namespace hardware

@@ -1,4 +1,7 @@
 #include "hardware/protocol/SCS0009Protocol.h"
+#include <thread>
+#include <chrono>
+#include <mutex>
 
 namespace hardware {
 
@@ -59,7 +62,13 @@ namespace hardware {
             0x00, 0x00, // Goal Time (0x2C) - set to 0
             static_cast<uint8_t>(speed >> 8), static_cast<uint8_t>(speed & 0xFF)
         };
-        return send_packet(id, 0x03, params);
+        bool ok;
+        {
+            std::lock_guard<std::mutex> lock(*bus_mutex_);
+            ok = send_packet(id, 0x03, params);
+        }
+        std::this_thread::sleep_for(std::chrono::microseconds(200));
+        return ok;
     }
 
 }
