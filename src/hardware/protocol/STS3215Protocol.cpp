@@ -15,7 +15,7 @@ namespace hardware {
     bool STS3215Protocol::write16_le(uint8_t id, uint8_t reg, uint16_t value) const {
         bool ok;
         {
-            std::lock_guard<std::mutex> lock(transaction_mutex_);
+            std::lock_guard<std::mutex> lock(*bus_mutex_);
             // Little-endian: low byte first, high byte second
             ok = send_packet(id, INST_WRITE, {
                 reg,
@@ -31,7 +31,7 @@ namespace hardware {
     int16_t STS3215Protocol::read16_le(uint8_t id, uint8_t reg) const {
         std::vector<uint8_t> res;
         {
-            std::lock_guard<std::mutex> lock(transaction_mutex_);
+            std::lock_guard<std::mutex> lock(*bus_mutex_);
             if (!send_packet(id, INST_READ, {reg, 2})) return -1;
             res = receive_packet(id, 2);
         }
@@ -117,7 +117,7 @@ namespace hardware {
             0x00, 0x00,                                                                      // goal time = 0 LE
             static_cast<uint8_t>(speed & 0xFF), static_cast<uint8_t>((speed >> 8) & 0xFF)  // goal speed LE
         };
-        std::lock_guard<std::mutex> lock(transaction_mutex_);
+        std::lock_guard<std::mutex> lock(*bus_mutex_);
         return send_packet(id, INST_WRITE, params);
     }
 

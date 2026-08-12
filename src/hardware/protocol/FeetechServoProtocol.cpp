@@ -55,7 +55,7 @@ namespace hardware {
     bool FeetechServoProtocol::write8(uint8_t id, uint8_t reg, uint8_t value) const {
         bool ok;
         {
-            std::lock_guard<std::mutex> lock(transaction_mutex_);
+            std::lock_guard<std::mutex> lock(*bus_mutex_);
             ok = send_packet(id, INST_WRITE, {reg, value});
         }
         // Recovery time for the servo MCU
@@ -66,7 +66,7 @@ namespace hardware {
     bool FeetechServoProtocol::write16(uint8_t id, uint8_t reg, uint16_t value) const {
         bool ok;
         {
-            std::lock_guard<std::mutex> lock(transaction_mutex_);
+            std::lock_guard<std::mutex> lock(*bus_mutex_);
             // Feetech uses Big-Endian (High byte first)
             ok = send_packet(id, INST_WRITE, {reg, static_cast<uint8_t>(value >> 8), static_cast<uint8_t>(value & 0xFF)});
         }
@@ -77,7 +77,7 @@ namespace hardware {
     int16_t FeetechServoProtocol::read16(uint8_t id, uint8_t reg) const {
         std::vector<uint8_t> res;
         {
-            std::lock_guard<std::mutex> lock(transaction_mutex_);
+            std::lock_guard<std::mutex> lock(*bus_mutex_);
             if (!send_packet(id, INST_READ, {reg, 2})) return -1;
             res = receive_packet(id, 2);
         }
@@ -90,7 +90,7 @@ namespace hardware {
     int8_t FeetechServoProtocol::read8(uint8_t id, uint8_t reg) const {
         std::vector<uint8_t> res;
         {
-            std::lock_guard<std::mutex> lock(transaction_mutex_);
+            std::lock_guard<std::mutex> lock(*bus_mutex_);
             if (!send_packet(id, INST_READ, {reg, 1})) return -1;
             res = receive_packet(id, 1);
         }
