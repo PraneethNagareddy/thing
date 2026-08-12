@@ -22,11 +22,16 @@ namespace control {
         std::cout << "  f2        - 2 finger Salue" << std::endl;
         std::cout << "  rock      - Rock On" << std::endl;
         std::cout << "  gun       - Finger Gun" << std::endl;
-        std::cout << "  thumbsup - Execute Thumbs Up" << std::endl;
-        std::cout << "  reset    - Reset all servos to default" << std::endl;
+        std::cout << "  thumbsup  - Execute Thumbs Up" << std::endl;
+        std::cout << "  reset     - Reset all servos to default" << std::endl;
+        std::cout << "  web_shoot - Shoot Web" << std::endl;
+        std::cout << "  rotate    - Rotate fist" << std::endl;
         std::cout << "  show_off    - Show Off All gestures" << std::endl;
+        std::cout << "  wrist <pitch_pct> <yaw_pct> - Move wrist pitch & yaw (0.0 to 1.0)" << std::endl;
+        std::cout << "  pitch <pct> - Move wrist pitch (0.0 to 1.0)" << std::endl;
+        std::cout << "  yaw <pct>   - Move wrist yaw (0.0 to 1.0)" << std::endl;
         std::cout << "  stats <id>    - Get real-time servo telemetry" << std::endl;
-        std::cout << "  set <id> <angle> - Set individual servo angle (0-300 degrees)" << std::endl;
+        std::cout << "  set <id> <angle> - Set individual servo angle (0-300 deg for SCS0009, 0-360 deg for STS3215)" << std::endl;
         std::cout << "  exit     - Stop the controller" << std::endl;
         std::cout << ">> ";
     }
@@ -84,6 +89,53 @@ namespace control {
                     std::cout << "Usage: grab <size_mm>" << std::endl;
                 }
             }
+            else if (lower_input.find("wrist") == 0) {
+                std::stringstream ss(input);
+                std::string cmd;
+                float pitch_pct, yaw_pct;
+                if (ss >> cmd >> pitch_pct >> yaw_pct) {
+                    std::cout << "Moving Wrist Pitch to " << pitch_pct << ", Yaw to " << yaw_pct << "..." << std::endl;
+                    anatomy::hand::WristMovement mov(
+                        articulation::movement::Pitch{pitch_pct, 1000},
+                        articulation::movement::Yaw{yaw_pct, 1000}
+                    );
+                    std::vector<std::variant<anatomy::hand::FingerMovement, anatomy::hand::ThumbMovement, anatomy::hand::WristMovement>> movements = { mov };
+                    hand_->apply(movements);
+                } else {
+                    std::cout << "Usage: wrist <pitch_pct> <yaw_pct>" << std::endl;
+                }
+            }
+            else if (lower_input.find("pitch") == 0) {
+                std::stringstream ss(input);
+                std::string cmd;
+                float pitch_pct;
+                if (ss >> cmd >> pitch_pct) {
+                    std::cout << "Moving Wrist Pitch to " << pitch_pct << "..." << std::endl;
+                    anatomy::hand::WristMovement mov(
+                        articulation::movement::Pitch{pitch_pct, 1000}
+                    );
+                    std::vector<std::variant<anatomy::hand::FingerMovement, anatomy::hand::ThumbMovement, anatomy::hand::WristMovement>> movements = { mov };
+                    hand_->apply(movements);
+                } else {
+                    std::cout << "Usage: pitch <pct>" << std::endl;
+                }
+            }
+            else if (lower_input.find("yaw") == 0) {
+                std::stringstream ss(input);
+                std::string cmd;
+                float yaw_pct;
+                if (ss >> cmd >> yaw_pct) {
+                    std::cout << "Moving Wrist Yaw to " << yaw_pct << "..." << std::endl;
+                    anatomy::hand::WristMovement mov(
+                        std::monostate{},
+                        articulation::movement::Yaw{yaw_pct, 1000}
+                    );
+                    std::vector<std::variant<anatomy::hand::FingerMovement, anatomy::hand::ThumbMovement, anatomy::hand::WristMovement>> movements = { mov };
+                    hand_->apply(movements);
+                } else {
+                    std::cout << "Usage: yaw <pct>" << std::endl;
+                }
+            }
             else if (lower_input == "peace") {
                 std::cout << "Executing peace sign..." << std::endl;
                 auto movements = gestures::Gestures::peace();
@@ -107,6 +159,16 @@ namespace control {
             else if (lower_input == "reset") {
                 std::cout << "Resetting all servos to default positions..." << std::endl;
                 auto movements = gestures::Gestures::reset_all();
+                hand_->apply(movements);
+            }
+            else if (lower_input == "web_shoot") {
+                std::cout << "Shooting web..." << std::endl;
+                auto movements = gestures::Gestures::spidey_web();
+                hand_->apply(movements);
+            }
+            else if (lower_input == "rotate") {
+                std::cout << "Rotating fist" << std::endl;
+                auto movements = gestures::Gestures::fist_rotate();
                 hand_->apply(movements);
             }
             else if (lower_input == "show_off") {
@@ -155,15 +217,25 @@ namespace control {
                     continue;
                 }
 
-                if (hardware::constants::DEFAULT_SCS0009_PROTOCOL) {
+                if (id >= 11) {
+                    using hardware::constants::DEFAULT_STS3215_PROTOCOL;
+                    if (DEFAULT_STS3215_PROTOCOL) {
+                        std::cout << "\n--- Servo Telemetry (ID: " << id << " - STS3215) ---" << std::endl;
+                        std::cout << std::fixed << std::setprecision(2);
+                        std::cout << "  Position:    " << DEFAULT_STS3215_PROTOCOL->read_present_position(id) << " steps" << std::endl;
+                        float load_pct = static_cast<float>(DEFAULT_STS3215_PROTOCOL->read_present_load(id) & 0x3FF) / 10.23f;
+                        std::cout << "  Load:        " << load_pct << " %" << std::endl;
+                        std::cout << "  Temperature: " << static_cast<int>(DEFAULT_STS3215_PROTOCOL->read_temperature(id)) << " °C" << std::endl;
+                        std::cout << "  Voltage:     " << DEFAULT_STS3215_PROTOCOL->read_voltage(id) << " mV" << std::endl;
+                        std::cout << "------------------------------------" << std::endl;
+                    }
+                } else if (hardware::constants::DEFAULT_SCS0009_PROTOCOL) {
                     using hardware::constants::DEFAULT_SCS0009_PROTOCOL;
-                    std::cout << "\n--- Servo Telemetry (ID: " << id << ") ---" << std::endl;
+                    std::cout << "\n--- Servo Telemetry (ID: " << id << " - SCS0009) ---" << std::endl;
                     std::cout << std::fixed << std::setprecision(2);
                     std::cout << "  Position:    " << DEFAULT_SCS0009_PROTOCOL->read_present_position(id) << " steps" << std::endl;
-                    // Mask Bit 10 (direction) and scale 0-1023 to 0-100%
                     float load_pct = static_cast<float>(DEFAULT_SCS0009_PROTOCOL->read_present_load(id) & 0x3FF) / 10.23f;
                     std::cout << "  Load:        " << load_pct << " %" << std::endl;
-                    // Cast int8_t to int so cout prints the number 25 instead of the ASCII character
                     std::cout << "  Temperature: " << static_cast<int>(DEFAULT_SCS0009_PROTOCOL->read_temperature(id)) << " °C" << std::endl;
                     std::cout << "  Voltage:     " << DEFAULT_SCS0009_PROTOCOL->read_voltage(id) << " mV" << std::endl;
                     std::cout << "------------------------------------" << std::endl;
@@ -176,26 +248,35 @@ namespace control {
                 std::stringstream ss(input);
                 std::string cmd;
                 int id;
-                float angle_degrees; // Use float for angle to allow decimal input
+                float angle_degrees;
 
                 if (!(ss >> cmd >> id >> angle_degrees)) {
                     std::cout << "Usage: set <servoID> <angle>" << std::endl;
                     continue;
                 }
 
-                if (hardware::constants::DEFAULT_SCS0009_PROTOCOL) {
+                if (id >= 11) {
+                    using hardware::constants::DEFAULT_STS3215_PROTOCOL;
+                    if (DEFAULT_STS3215_PROTOCOL) {
+                        uint16_t steps = static_cast<uint16_t>((angle_degrees / 360.0f) * 4095.0f);
+                        std::cout << "Setting STS3215 servo " << id << " to angle " << angle_degrees << " degrees (" << steps << " steps)..." << std::endl;
+                        if (DEFAULT_STS3215_PROTOCOL->move_steps(id, steps)) {
+                            std::cout << "Servo " << id << " moved successfully." << std::endl;
+                        } else {
+                            std::cout << "Failed to move servo " << id << "." << std::endl;
+                        }
+                    }
+                } else if (hardware::constants::DEFAULT_SCS0009_PROTOCOL) {
                     using hardware::constants::DEFAULT_SCS0009_PROTOCOL;
-                    // Convert angle from degrees (0-300) to steps (0-1023)
                     uint16_t steps = static_cast<uint16_t>((angle_degrees / 300.0f) * 1023.0f);
-
-                    std::cout << "Setting servo " << id << " to angle " << angle_degrees << " degrees (" << steps << " steps)..." << std::endl;
+                    std::cout << "Setting SCS0009 servo " << id << " to angle " << angle_degrees << " degrees (" << steps << " steps)..." << std::endl;
                     if (DEFAULT_SCS0009_PROTOCOL->move_steps(id, steps)) {
                         std::cout << "Servo " << id << " moved successfully." << std::endl;
                     } else {
                         std::cout << "Failed to move servo " << id << "." << std::endl;
                     }
                 } else {
-                    std::cout << "Error: SCS0009Protocol not initialized." << std::endl;
+                    std::cout << "Error: Servo protocol not initialized." << std::endl;
                 }
             }
             else {

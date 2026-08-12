@@ -12,10 +12,15 @@ endif()
 add_executable(thing main.cpp
         include/articulation/Motion.h
         include/articulation/Joint.h
+        include/hardware/servo/IServo.h
         include/hardware/servo/SCS0009Servo.h
+        include/hardware/servo/STS3215Servo.h
+        src/hardware/servo/STS3215Servo.cpp
         include/anatomy/Hand.h
         include/anatomy/Finger.h
         include/anatomy/Thumb.h
+        include/anatomy/Wrist.h
+        src/anatomy/Wrist.cpp
         include/telemetry/IMonitorable.h
         include/telemetry/alert/Alert.h
         include/telemetry/Reading.h
@@ -36,7 +41,9 @@ add_executable(thing main.cpp
         include/hardware/bus/SerialBus.h
         include/hardware/protocol/FeetechServoProtocol.h
         include/hardware/protocol/SCS0009Protocol.h
+        include/hardware/protocol/STS3215Protocol.h
         src/hardware/protocol/SCS0009Protocol.cpp
+        src/hardware/protocol/STS3215Protocol.cpp
         src/hardware/bus/MacSerialBus.cpp
         include/hardware/bus/LinuxSerialBus.h
         include/builder/HandBuilder.h

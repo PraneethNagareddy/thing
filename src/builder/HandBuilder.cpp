@@ -6,8 +6,11 @@
 #include "builder/HandBuilder.h"
 #include "articulation/Joint.h"
 #include "anatomy/Finger.h"
+#include "anatomy/Wrist.h"
 #include "articulation/Constants.h"
 #include "hardware/HardwareConstants.h"
+#include "hardware/servo/SCS0009Servo.h"
+#include "hardware/servo/STS3215Servo.h"
 #include "telemetry/alert/AlertHandler.h"
 #include "telemetry/TelemetryManager.h"
 
@@ -15,25 +18,18 @@
 using namespace builder;
 namespace builder {
 
-
-     // void HandBuilder::configure_safety_protocols() {
-     //     using namespace telemetry::alert;
-     //
-     //     auto emergency_stop_cb = [this](const Alert& alert) {
-     //         if (alert.reading) {
-     //             // Direct hardware kill switch for the specific servo ID
-     //             hardware_->set_torque_enable(alert.reading->monitorable_id, false);
-     //         }
-     //     };
-     //
-     //     // Link safety actions to hardware execution
-     //     AlertHandler::getInstance().register_action_handler(SuggestedAction::FREEZE, emergency_stop_cb);
-     //     AlertHandler::getInstance().register_action_handler(SuggestedAction::SHUTDOWN, emergency_stop_cb);
-     // }
-
      std::shared_ptr<Joint> HandBuilder::create_monitored_joint(
          const std::string& name, uint8_t id, float no_flex_angle, float full_flex_angle, float default_angle) {
          auto servo = std::make_shared<hardware::SCS0009Servo>(id, name, hardware::constants::DEFAULT_SCS0009_PROTOCOL);
+         auto joint = std::make_shared<Joint>(servo, id, no_flex_angle, full_flex_angle, default_angle);
+         // Wire into the Telemetry system
+         telemetry::TelemetryManager::register_monitorable(id, joint.get());
+         return joint;
+     }
+
+     std::shared_ptr<Joint> HandBuilder::create_monitored_sts3215_joint(
+         const std::string& name, uint8_t id, float no_flex_angle, float full_flex_angle, float default_angle) {
+         auto servo = std::make_shared<hardware::STS3215Servo>(id, name, hardware::constants::DEFAULT_STS3215_PROTOCOL);
          auto joint = std::make_shared<Joint>(servo, id, no_flex_angle, full_flex_angle, default_angle);
          // Wire into the Telemetry system
          telemetry::TelemetryManager::register_monitorable(id, joint.get());
@@ -74,6 +70,24 @@ namespace builder {
          return thumb;
      }
 
+     std::shared_ptr<anatomy::hand::Wrist> HandBuilder::build_wrist() {
+
+         auto pitch_joint = create_monitored_sts3215_joint("Wrist_Pitch",
+                 11,
+                 constants::WRIST_PITCH_NO_FLEX_ANGLE,
+                 constants::WRIST_PITCH_FULL_FLEX_ANGLE,
+                 constants::WRIST_PITCH_NO_FLEX_ANGLE);
+
+         auto yaw_joint = create_monitored_sts3215_joint("Wrist_Yaw",
+                 12,
+                 constants::WRIST_YAW_NO_FLEX_ANGLE,
+                 constants::WRIST_YAW_FULL_FLEX_ANGLE,
+                 constants::WRIST_YAW_NO_FLEX_ANGLE);
+
+         auto wrist = std::make_shared<anatomy::hand::Wrist>(pitch_joint, yaw_joint);
+         return wrist;
+     }
+
      std::shared_ptr<anatomy::hand::Hand> HandBuilder::build() {
 
          auto pinky_finger = build_standard_finger(anatomy::hand::Fingers::PINKY, 7, constants::PINKY_FINGER_NO_FLEX_ANGLE, constants::PINKY_FINGER_FULL_FLEX_ANGLE);
@@ -81,13 +95,15 @@ namespace builder {
          auto middle_finger = build_standard_finger(anatomy::hand::Fingers::MIDDLE, 5, constants::MIDDLE_FINGER_NO_FLEX_ANGLE, constants::MIDDLE_FINGER_FULL_FLEX_ANGLE);
          auto index_finger = build_standard_finger(anatomy::hand::Fingers::INDEX, 4, constants::INDEX_FINGER_NO_FLEX_ANGLE, constants::INDEX_FINGER_FULL_FLEX_ANGLE);
          auto thumb = build_thumb();
+         auto wrist = build_wrist();
 
          auto right_hand = std::make_shared<anatomy::hand::Hand>(anatomy::hand::Side::RIGHT,
              pinky_finger,
              ring_finger,
              middle_finger,
              index_finger,
-             thumb);
+             thumb,
+             wrist);
 
          return right_hand;
      }

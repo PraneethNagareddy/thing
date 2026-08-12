@@ -9,7 +9,10 @@
 #include <string>
 #include <stdexcept>
 #include <utility>
+#include <atomic>
+#include <cmath>
 
+#include "IServo.h"
 #include "../protocol/SCS0009Protocol.h"
 
 namespace hardware {
@@ -19,7 +22,7 @@ namespace hardware {
         SERIAL_BUS
     };
 
-    class SCS0009Servo {
+    class SCS0009Servo : public IServo {
     private:
         std::string name_;
         ServoType type_;

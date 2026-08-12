@@ -53,3 +53,5 @@
     * The start_spread_delay_ms and start_oppose_delay_ms in ThumbMovement is not honored 
     * Currently Finger's Flexion and Extension always uses 1.0-<value> for flexion. See if this is correct and see the behavior needed for Thumb's Spread and Oppose.
     * Make the Gesture methods also take a factor so that the controller can decide what percent of the gesture to make.
+    * After adding the wrist servos and code, the delay issue is back - the joins randomly executes a movements very slowly. Most likely caused due to lack of enough threads
+    * After adding wrist servos and code, the telemetry dashboard is now showing -1 readings randomly but persistently for most of the servos. Most likely caused due to multi-threading. Lack of enough threads, may be?

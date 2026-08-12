@@ -10,7 +10,7 @@
 using namespace anatomy::hand;
 namespace gestures {
 
-    using Movement = std::variant<FingerMovement, ThumbMovement>;
+    using Movement = std::variant<FingerMovement, ThumbMovement, WristMovement>;
 
     class Gestures {
     public:
@@ -238,6 +238,82 @@ namespace gestures {
                     200,
                     300,
                     400
+                },
+                WristMovement{
+                    Pitch{0.5f, 1000},
+                    Yaw{0.5f, 1000},
+                    100
+                }
+            };
+        }
+
+        static std::vector<Movement> spidey_web() {
+            return {
+                /*FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 100},*/
+                FingerMovement{Fingers::MIDDLE, Flexion{1.0f, 1000}, 100},
+                FingerMovement{Fingers::RING, Flexion{1.0f, 1000}, 100},
+                FingerMovement{Fingers::PINKY, Extension{1.0f, 1000}, 500},
+                FingerMovement{Fingers::INDEX, Extension{1.0f, 1000}, 100},
+                ThumbMovement{
+                    Extension{1.0f, 1000}, // Full extend
+                    Abduction{1.0f, 1000}, // Full extend
+                    Reposition{1.0f, 1000}, // Full repose
+                    200,
+                    300,
+                    400
+                },
+                WristMovement{
+                    Pitch{1.0f, 1000},
+                    Yaw{0.5f, 1000},
+                    100
+                }
+            };
+        }
+
+        static std::vector<Movement> fist_rotate() {
+            return {
+                /*FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 100},*/
+                FingerMovement{Fingers::MIDDLE, Flexion{1.0f, 1000}, 100},
+                FingerMovement{Fingers::RING, Flexion{1.0f, 1000}, 100},
+                FingerMovement{Fingers::PINKY, Flexion{1.0f, 1000}, 500},
+                FingerMovement{Fingers::INDEX, Flexion{1.0f, 1000}, 100},
+                ThumbMovement{
+                    Extension{0.2f, 1000}, // Full extend
+                    Abduction{0.2f, 1000}, // Full extend
+                    Opposition{1.0f, 1000}, // Full repose
+                    500,
+                    300,
+                    400
+                },
+                WristMovement{
+                    Pitch{0.5f, 1000},
+                    Yaw{0.0f, 1000},
+                    1000
+                },
+                WristMovement{
+                    Pitch{0.0f, 500},
+                    Yaw{0.5f, 500},
+                    1000
+                },
+                WristMovement{
+                    Pitch{0.5f, 500},
+                    Yaw{1.0f, 500},
+                    1500
+                },
+                WristMovement{
+                    Pitch{1.0f, 500},
+                    Yaw{0.5f, 500},
+                    2000
+                },
+                WristMovement{
+                    Pitch{0.5f, 500},
+                    Yaw{0.0f, 500},
+                    2500
+                },
+                WristMovement{
+                    Pitch{0.5f, 500},
+                    Yaw{0.0f, 500},
+                    3000
                 }
             };
         }
