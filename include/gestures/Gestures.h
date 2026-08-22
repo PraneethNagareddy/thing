@@ -319,10 +319,6 @@ namespace gestures {
             };
         }
 
-        /**
-         * Streams a continuous rotation of the wrist in 2DOF space (Pitch and Yaw)
-         * over 360 degrees, completing a full circle.
-         */
         static anatomy::hand::MovementStream rotate_wrist_stream() {
             using namespace anatomy::hand;
             using namespace articulation::movement;
@@ -343,12 +339,13 @@ namespace gestures {
                     400
                 }
             };
-
             stream.push_back(fistGroup);
             
-            // 36 steps of 10 degrees each to make a full 360 circle
-            const int num_steps = 36;
-            const int time_per_step_ms = 10; // fast fluid motion
+            // 100 steps for a very smooth continuous circle
+            const int num_steps = 10;
+            // time_per_step_ms = 0 means max speed. We rely on the stream interval (e.g. 20ms) to pace the movement,
+            // preventing the servo from executing start/stop trapezoidal profiles at every step.
+            const int time_per_step_ms = 0; 
 
             for (int i = 0; i <= num_steps; ++i) {
                 float angle_rad = (static_cast<float>(i) / num_steps) * 2.0f * M_PI;

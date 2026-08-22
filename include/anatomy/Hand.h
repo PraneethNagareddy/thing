@@ -138,7 +138,7 @@ namespace anatomy::hand {
         wrist_(std::move(wrist)) {}
         ~Hand() = default;
         void apply(std::span<std::variant<FingerMovement, ThumbMovement, WristMovement>> movements);
-        void apply_stream(const MovementStream& stream);
+        void apply_stream(const MovementStream& stream, std::chrono::milliseconds interval_ms = std::chrono::milliseconds(0));
     };
 }
 

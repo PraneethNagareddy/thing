@@ -46,6 +46,7 @@ void register_shutdown_action() {
     using namespace telemetry;
     auto shutdown_action = [](const Alert& alert) {
         // CRITICAL: Call TelemetryManager::stop() before exiting
+        std::cout<<"Critical Error. Shutting Down.";
         TelemetryManager::stop();
         std::exit(EXIT_FAILURE);
     };

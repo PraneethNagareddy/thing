@@ -136,9 +136,15 @@ namespace anatomy::hand {
           std::cout << "All individual movement threads have completed their tasks." << std::endl;
      }
 
-     void Hand::apply_stream(const MovementStream& stream) {
+     void Hand::apply_stream(const MovementStream& stream, std::chrono::milliseconds interval_ms) {
           for (auto group : stream) {
+               auto start = std::chrono::steady_clock::now();
                apply(group);
+               auto end = std::chrono::steady_clock::now();
+               auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+               if (elapsed < interval_ms) {
+                   std::this_thread::sleep_for(interval_ms - elapsed);
+               }
           }
      }
 
